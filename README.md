@@ -1,4 +1,4 @@
-# Hytale Plugin Template
+# Little Helpers
 
 Little Helpers mod source code for all to browse.
 
