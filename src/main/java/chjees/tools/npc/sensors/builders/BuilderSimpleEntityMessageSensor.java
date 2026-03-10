@@ -60,7 +60,7 @@ public class BuilderSimpleEntityMessageSensor extends BuilderSensorBase {
         );
         if(tempUseEntity)
         {
-            provideFeature(Feature.AnyPosition);
+            this.provideFeature(Feature.LiveEntity);
         }
 
         return this;
@@ -87,6 +87,4 @@ public class BuilderSimpleEntityMessageSensor extends BuilderSensorBase {
     public BooleanHolder getClearMessage() {
         return clearMessage;
     }
-
-    /* TODO: Add getters for private data variables for SimpleEntityMessageSensor to access.*/
 }

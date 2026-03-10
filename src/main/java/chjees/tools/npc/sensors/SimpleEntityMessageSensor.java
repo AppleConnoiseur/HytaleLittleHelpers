@@ -67,13 +67,17 @@ public class SimpleEntityMessageSensor extends SensorBase {
             {
                 //Set the target.
                 Ref<EntityStore> otherRef = store.getExternalData().getRefFromUUID(message.getRefUUID());
+
                 if(otherRef != null)
                 {
                     UUIDComponent otherUUID = store.getComponent(otherRef, UUIDComponent.getComponentType());
                     if (otherUUID != null)
                     {
-                        entityProvider.setTarget(ref, store);
+                        entityProvider.setTarget(otherRef, store);
                     }
+                } else {
+                    entityProvider.clear();
+                    return false;
                 }
             }
 

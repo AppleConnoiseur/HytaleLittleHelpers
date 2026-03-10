@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.Builder;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
+import com.hypixel.hytale.server.npc.asset.builder.Feature;
 import com.hypixel.hytale.server.npc.asset.builder.validators.IntRangeValidator;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
@@ -38,11 +39,12 @@ public class BuilderFairyHome extends BuilderSensorBase {
         this.getInt(data,
                 "HomeRadius",
                 this::setHomeRadius,
-                0,
+                30,
                 IntRangeValidator.between(0, Integer.MAX_VALUE),
                 BuilderDescriptorState.Stable,
                 "The radius in which the fairy will stay at home.",
                 "The radius in which the fairy will stay at home. If set above zero it provide target positioning data");
+        this.provideFeature(Feature.Position);
         return this;
     }
 

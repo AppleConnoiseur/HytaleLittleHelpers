@@ -43,7 +43,10 @@ public class FairyHome extends SensorBase {
 
         //Exit early if no co-ordinates are set.
         if(!fairyComp.isHomeCoordinatesSet())
+        {
+            positionProvider.clear();
             return false;
+        }
 
         TransformComponent transformComp = store.getComponent(ref, TransformComponent.getComponentType());
         assert transformComp != null;

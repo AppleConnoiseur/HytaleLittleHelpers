@@ -9,6 +9,7 @@ import chjees.littlehelpers.npc.actions.builders.BuilderRecruitFairyAction;
 import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.filters.builders.BuilderFairyRecruiter;
 import chjees.littlehelpers.npc.movement.builders.BuilderBodyFlyMotionMaintainDistance;
+import chjees.littlehelpers.npc.sensors.builders.BuilderFairyHome;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyIsRecruited;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyNeedsSensor;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyRecruiterSensor;
@@ -100,7 +101,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
             //Sensor components
             NPCCore.registerCoreComponentType("LHFairyNeedsSatiated", BuilderFairyNeedsSensor::new);
-            NPCCore.registerCoreComponentType("LHFairyHome", BuilderFairyRecruiterSensor::new);
+            NPCCore.registerCoreComponentType("LHFairyHome", BuilderFairyHome::new);
             NPCCore.registerCoreComponentType("LHFairyIsRecruited", BuilderFairyIsRecruited::new);
             NPCCore.registerCoreComponentType("LHIsFairyRecruiter", BuilderFairyRecruiterSensor::new);
 
