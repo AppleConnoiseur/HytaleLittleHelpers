@@ -19,6 +19,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 public class FairyHome extends SensorBase {
     private final int homeRadiusSq;
     private final boolean usePosition;
+    private final boolean checkOutside;
     protected final PositionProvider positionProvider = new PositionProvider();
 
     public FairyHome(@Nonnull BuilderFairyHome builder, @Nonnull BuilderSupport builderSupport) {
@@ -26,6 +27,7 @@ public class FairyHome extends SensorBase {
         int homeRadius = builder.getHomeRadius();
         homeRadiusSq = homeRadius * homeRadius;
         usePosition = builder.getUsePosition();
+        checkOutside = builder.getOutside();
     }
 
     @Override
@@ -52,11 +54,21 @@ public class FairyHome extends SensorBase {
         Vector3d position = transformComp.getPosition();
         double distanceToHome = position.distanceSquaredTo(fairyComp.getHomeCoordinatesAsPoint());
 
-        //Check if the distance to home is greater than our home radius.
-        if(distanceToHome > homeRadiusSq)
+        if(checkOutside)
         {
-            positionProvider.setTarget(fairyComp.getHomeCoordinatesAsPoint());
-            return true;
+            //Checks if we are outside the home zone.
+            if(distanceToHome > homeRadiusSq)
+            {
+                positionProvider.setTarget(fairyComp.getHomeCoordinatesAsPoint());
+                return true;
+            }
+        }else{
+            //Check if we are inside the home radius.
+            if(distanceToHome <= homeRadiusSq)
+            {
+                positionProvider.setTarget(fairyComp.getHomeCoordinatesAsPoint());
+                return true;
+            }
         }
 
         positionProvider.clear();

@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.modules.entity.component.TransformComponen
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -35,10 +36,12 @@ public class FairySetHome extends ActionBase {
         if(!super.execute(ref, role, sensorInfo, dt, store))
             return  false;
 
-
         //Set the new home of the fairy.
         FairyComponent fairyComp = store.getComponent(ref, LittleHelpersPlugin.Instance().getFairyComponent());
         assert fairyComp != null;
+
+        @SuppressWarnings("DataFlowIssue") NPCEntity npcComponent = store.getComponent(ref, NPCEntity.getComponentType());
+        assert npcComponent != null;
 
         if(unsetHome)
         {
@@ -53,7 +56,7 @@ public class FairySetHome extends ActionBase {
         Vector3d point = transformComp.getPosition();
         fairyComp.setHomeCoordinates((int)point.x, (int)point.y, (int)point.z);
         fairyComp.setHomeCoordinatesSet(true);
-
+        npcComponent.setLeashPoint(point);
         return true;
     }
 }

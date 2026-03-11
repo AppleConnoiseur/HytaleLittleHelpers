@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.npc.instructions.Sensor;
 public class BuilderFairyHome extends BuilderSensorBase {
     private int homeRadius;
     private boolean usePosition;
+    private boolean outside;
 
     public BuilderFairyHome() {
     }
@@ -37,6 +38,13 @@ public class BuilderFairyHome extends BuilderSensorBase {
                 BuilderDescriptorState.Stable,
                 "The radius in which the fairy will stay at home.",
                 "The radius in which the fairy will stay at home. If set above zero it provide target positioning data.");
+        this.getBoolean(data,
+                "Outside",
+                this::setOutside,
+                false,
+                BuilderDescriptorState.Stable,
+                "Whether to check if the fairy is outside the home zone.",
+                "Whether to check if the fairy is outside the home zone.");
         boolean tempUsePosition = this.getBoolean(data,
                 "UsePosition",
                 this::setUsePosition,
@@ -74,5 +82,13 @@ public class BuilderFairyHome extends BuilderSensorBase {
 
     private void setUsePosition(boolean usePosition) {
         this.usePosition = usePosition;
+    }
+
+    public boolean getOutside() {
+        return outside;
+    }
+
+    private void setOutside(boolean outside) {
+        this.outside = outside;
     }
 }
