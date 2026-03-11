@@ -11,8 +11,8 @@ import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 
 public class BuilderFairyHome extends BuilderSensorBase {
-    private int senseRadius;
     private int homeRadius;
+    private boolean usePosition;
 
     public BuilderFairyHome() {
     }
@@ -29,13 +29,6 @@ public class BuilderFairyHome extends BuilderSensorBase {
 
     @Override
     public Builder<Sensor> readConfig(JsonElement data) {
-        this.requireInt(data,
-            "SensingRadius",
-            this::setSenseRadius,
-            IntRangeValidator.between(0, Integer.MAX_VALUE),
-            BuilderDescriptorState.Stable,
-            "The radius in which the fairy can sense its home.",
-            "The radius in which the fairy can sense its home.");
         this.getInt(data,
                 "HomeRadius",
                 this::setHomeRadius,
@@ -43,8 +36,17 @@ public class BuilderFairyHome extends BuilderSensorBase {
                 IntRangeValidator.between(0, Integer.MAX_VALUE),
                 BuilderDescriptorState.Stable,
                 "The radius in which the fairy will stay at home.",
-                "The radius in which the fairy will stay at home. If set above zero it provide target positioning data");
-        this.provideFeature(Feature.Position);
+                "The radius in which the fairy will stay at home. If set above zero it provide target positioning data.");
+        boolean tempUsePosition = this.getBoolean(data,
+                "UsePosition",
+                this::setUsePosition,
+                false,
+                BuilderDescriptorState.Stable,
+                "Whether to provide targeting feature to the instruction.",
+                "Whether to provide targeting feature to the instruction. Useful for making the fairy go home.");
+        if(tempUsePosition)
+            this.provideFeature(Feature.Position);
+
         return this;
     }
 
@@ -58,19 +60,19 @@ public class BuilderFairyHome extends BuilderSensorBase {
         return BuilderDescriptorState.Stable;
     }
 
-    public int getSenseRadius() {
-        return senseRadius;
-    }
-
-    public void setSenseRadius(int senseRadius) {
-        this.senseRadius = senseRadius;
-    }
-
     public int getHomeRadius() {
         return homeRadius;
     }
 
     public void setHomeRadius(int homeRadius) {
         this.homeRadius = homeRadius;
+    }
+
+    public boolean getUsePosition() {
+        return usePosition;
+    }
+
+    private void setUsePosition(boolean usePosition) {
+        this.usePosition = usePosition;
     }
 }

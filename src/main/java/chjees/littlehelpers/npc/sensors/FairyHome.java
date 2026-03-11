@@ -16,19 +16,16 @@ import javax.annotation.Nonnull;
 import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-@SuppressWarnings("FieldMayBeFinal")
 public class FairyHome extends SensorBase {
-    private int senseRadius;
-    private int homeRadius;
-    private int homeRadiusSq;
+    private final int homeRadiusSq;
+    private final boolean usePosition;
     protected final PositionProvider positionProvider = new PositionProvider();
 
     public FairyHome(@Nonnull BuilderFairyHome builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);
-
-        senseRadius = builder.getSenseRadius();
-        homeRadius = builder.getHomeRadius();
+        int homeRadius = builder.getHomeRadius();
         homeRadiusSq = homeRadius * homeRadius;
+        usePosition = builder.getUsePosition();
     }
 
     @Override
@@ -53,23 +50,22 @@ public class FairyHome extends SensorBase {
 
         //Check distance
         Vector3d position = transformComp.getPosition();
+        double distanceToHome = position.distanceSquaredTo(fairyComp.getHomeCoordinatesAsPoint());
 
-        //Provide position data if we care about home radius.
-        double distance = position.distanceSquaredTo(fairyComp.getHomeCoordinatesAsPoint());
-        if(homeRadius > 0 && distance > homeRadiusSq)
+        //Check if the distance to home is greater than our home radius.
+        if(distanceToHome > homeRadiusSq)
         {
             positionProvider.setTarget(fairyComp.getHomeCoordinatesAsPoint());
-        }else
-        {
-            positionProvider.clear();
+            return true;
         }
 
-        return distance <= senseRadius;
+        positionProvider.clear();
+        return false;
     }
 
     @Override
     public InfoProvider getSensorInfo() {
-        if(homeRadius > 0)
+        if(usePosition)
             return positionProvider;
 
         return null;

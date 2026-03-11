@@ -4,22 +4,22 @@ import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.components.FairyComponent;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.matrix.Matrix4d;
+import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.protocol.DebugShape;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetEntityCommand;
+import com.hypixel.hytale.server.core.modules.debug.DebugUtils;
+import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-
 import javax.annotation.Nonnull;
 
 public class LittleHelpersDebug extends AbstractTargetEntityCommand {
-    @Nonnull
-    private final OptionalArg<String> componentArg = this.withOptionalArg("component", "Little_Helpers.commands.debug.component.desc", ArgTypes.STRING);
-
     public LittleHelpersDebug(String name, String description) {
         super(name, description);
     }
@@ -40,7 +40,39 @@ public class LittleHelpersDebug extends AbstractTargetEntityCommand {
                 stringBuilder.append("Need:Happiness=").append(fairyComp.getHappinessNeed()).append('\n');
                 stringBuilder.append("Home=").append(fairyComp.getHomeCoordinatesAsPoint()).append('\n');
                 commandContext.sendMessage(Message.raw(stringBuilder.toString()));
+
+                if(fairyComp.isHomeCoordinatesSet())
+                {
+                    //Debug information
+                    TransformComponent transformComponent = store.getComponent(firstObject, TransformComponent.getComponentType());
+                    assert transformComponent != null;
+
+                    Vector3d position = fairyComp.getHomeCoordinatesAsPoint();
+
+                    //Home center
+                    {
+                        Vector3f color = new Vector3f(1f, 201 / 255f, 14 / 255f);
+                        int flags = DebugUtils.FLAG_FADE;
+                        DebugUtils.add(world, DebugShape.Cube, makeMatrix(position, 1.0), color, 10.0F, flags);
+                    }
+
+                    //Home area
+                    {
+                        Vector3f color = DebugUtils.COLOR_LIME;
+                        int flags = DebugUtils.FLAG_FADE;
+                        DebugUtils.add(world, DebugShape.Cube, makeMatrix(position, 60.0), color, 10.0F, flags);
+                    }
+                }
             }
         }
+    }
+
+    @Nonnull
+    public static Matrix4d makeMatrix(@Nonnull Vector3d pos, double scale) {
+        Matrix4d matrix = new Matrix4d();
+        matrix.identity();
+        matrix.translate(pos);
+        matrix.scale(scale, scale, scale);
+        return matrix;
     }
 }
