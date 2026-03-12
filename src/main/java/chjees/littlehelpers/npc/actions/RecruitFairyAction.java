@@ -7,7 +7,7 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.InventoryComponent;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -65,13 +65,17 @@ public class RecruitFairyAction extends ActionBase {
                     store.addComponent(ref, LittleHelpersPlugin.Instance().getFairyComponent(), fairyComp);
 
                     //Deduct one item from players hand.
-                    Inventory playerInventory = playerComponent.getInventory();
+                    InventoryComponent.Hotbar playerHotbar = store.getComponent(playerReference, InventoryComponent.Hotbar.getComponentType());
+                    assert playerHotbar != null;
 
-                    byte activeHotbarSlot = playerInventory.getActiveHotbarSlot();
+                    byte activeHotbarSlot = playerHotbar.getActiveSlot();
                     if(activeHotbarSlot > -1)
                     {
-                        ItemStack activeHotbarItemstack = playerInventory.getHotbar().getItemStack(activeHotbarSlot);
-                        playerInventory.getHotbar().removeItemStackFromSlot(activeHotbarSlot, activeHotbarItemstack, 1);
+                        ItemStack activeHotbarItemstack = playerHotbar.getActiveItem();
+                        if(activeHotbarItemstack != null)
+                        {
+                            playerHotbar.getInventory().removeItemStackFromSlot(activeHotbarSlot, activeHotbarItemstack, 1);
+                        }
                     }
 
                     //Switch appearance if possible.

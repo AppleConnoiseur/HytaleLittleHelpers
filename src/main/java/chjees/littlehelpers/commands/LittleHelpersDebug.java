@@ -15,9 +15,9 @@ import com.hypixel.hytale.server.core.modules.debug.DebugUtils;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class LittleHelpersDebug extends AbstractTargetEntityCommand {
     public LittleHelpersDebug(String name, String description) {
@@ -25,7 +25,7 @@ public class LittleHelpersDebug extends AbstractTargetEntityCommand {
     }
 
     @Override
-    protected void execute(@NonNullDecl CommandContext commandContext, @NonNullDecl ObjectList<Ref<EntityStore>> objectList, @NonNullDecl World world, @NonNullDecl Store<EntityStore> store) {
+    protected void execute(@NonNullDecl CommandContext commandContext, @NonNullDecl List<Ref<EntityStore>> objectList, @NonNullDecl World world, @NonNullDecl Store<EntityStore> store) {
         commandContext.sendMessage(Message.raw("Hello from LittleHelpersDebug."));
         if(!objectList.isEmpty())
         {
