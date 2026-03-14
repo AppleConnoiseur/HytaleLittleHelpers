@@ -151,10 +151,11 @@ public class LittleHelpersPlugin extends JavaPlugin {
         for (String removedItemId : event.getRemovedAssets())
         {
             HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! %s", removedItemId);
-            if(farmableBlocks.remove(removedItemId))
+            farmableBlocks.remove(removedItemId);
+            /*if(farmableBlocks.remove(removedItemId))
             {
                 HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Removed] Removed farmable block: %s", removedItemId);
-            }
+            }*/
         }
     }
 
@@ -169,16 +170,16 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 if(!farmableBlocks.contains(itemBlockId))
                 {
                     farmableBlocks.add(itemBlockId);
-                    HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Changed|Add] Added farmable block: %s", itemBlockId);
+                    //HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Changed|Add] Added farmable block: %s", itemBlockId);
                 }
             } else {
-                if(farmableBlocks.contains(itemBlockId))
+                farmableBlocks.remove(itemBlockId);
+                /*if(farmableBlocks.contains(itemBlockId))
                 {
                     farmableBlocks.remove(itemBlockId);
                     HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Changed|Remove] Removed farmable block: %s", itemBlockId);
-                }
+                }*/
             }
-
         }
     }
 
