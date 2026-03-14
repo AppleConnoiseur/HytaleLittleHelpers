@@ -30,7 +30,8 @@ public class FairyCanFarm extends SensorBase {
 
     @Override
     public boolean matches(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Role role, double dt, @NonNullDecl Store<EntityStore> store) {
-        super.matches(ref, role, dt, store);
+        if(!super.matches(ref, role, dt, store))
+            return  false;
 
         //Relevant data to work with.
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
@@ -56,9 +57,11 @@ public class FairyCanFarm extends SensorBase {
 
             //The data we care about.
             BlockType blockType = worldChunk.getBlockType(x, y, z);
+            if(blockType != null) //Break out early if we found a viable block. (Invert the result)
+                return !LittleHelpersPlugin.Instance().getFarmableBlocks().contains(blockType.getId());
 
             //Break out early if successful.
-            return blockType != null && LittleHelpersPlugin.Instance().getFarmableBlocks().contains(blockType.getId());
+            return true;
         });
 
         return foundBlock;

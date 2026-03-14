@@ -53,6 +53,4 @@ public class BuilderFairyCanFarm extends BuilderSensorBase {
     public IntHolder getScanRange() {
         return scanRange;
     }
-
-    /* TODO: Add getters for private data variables for FairyCanFarm to access.*/
 }
