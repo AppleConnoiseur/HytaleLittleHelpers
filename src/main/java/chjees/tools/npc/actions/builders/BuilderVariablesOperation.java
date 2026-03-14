@@ -84,6 +84,4 @@ public class BuilderVariablesOperation extends BuilderActionBase {
     public StringHolder getVariableName() {
         return variableName;
     }
-
-    /* TODO: Add getters for private data variables for VariablesOperation to access.*/
 }
