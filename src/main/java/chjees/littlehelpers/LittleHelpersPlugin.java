@@ -9,10 +9,7 @@ import chjees.littlehelpers.npc.actions.builders.BuilderRecruitFairyAction;
 import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.filters.builders.BuilderFairyRecruiter;
 import chjees.littlehelpers.npc.movement.builders.BuilderBodyFlyMotionMaintainDistance;
-import chjees.littlehelpers.npc.sensors.builders.BuilderFairyHome;
-import chjees.littlehelpers.npc.sensors.builders.BuilderFairyIsRecruited;
-import chjees.littlehelpers.npc.sensors.builders.BuilderFairyNeedsSensor;
-import chjees.littlehelpers.npc.sensors.builders.BuilderFairyRecruiterSensor;
+import chjees.littlehelpers.npc.sensors.builders.*;
 import chjees.tools.npc.actions.builders.BuilderClearMessage;import chjees.tools.npc.actions.builders.BuilderVariablesOperation;
 import chjees.tools.npc.components.SimpleEntityMessageComponent;
 import chjees.tools.npc.components.VariablesComponent;
@@ -31,6 +28,7 @@ import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
+import com.hypixel.hytale.server.core.asset.type.blocktype.config.farming.FarmingData;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
@@ -131,6 +129,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
             NPCCore.registerCoreComponentType("LHFairyHome", BuilderFairyHome::new);
             NPCCore.registerCoreComponentType("LHFairyIsRecruited", BuilderFairyIsRecruited::new);
             NPCCore.registerCoreComponentType("LHIsFairyRecruiter", BuilderFairyRecruiterSensor::new);
+            NPCCore.registerCoreComponentType("LHFairyCanFarm", BuilderFairyCanFarm::new);
 
             //Filter components
             NPCCore.registerCoreComponentType("LHFFairyRecruiter", BuilderFairyRecruiter::new);
@@ -188,6 +187,11 @@ public class LittleHelpersPlugin extends JavaPlugin {
         reloadFarmableBlocks();
     }
 
+    @Override
+    protected void shutdown() {
+        farmableBlocks.clear();
+    }
+
     /// Determines whether this Item is farmable.
     private boolean checkFarmableItem(Item item)
     {
@@ -196,6 +200,13 @@ public class LittleHelpersPlugin extends JavaPlugin {
             //Get the BlockType sub-data type for Item.
             BlockType blockType = BlockType.getAssetMap().getAsset(item.getBlockId());
             assert blockType != null;
+
+            FarmingData farmingConfig = blockType.getFarming();
+            boolean isFarmable = farmingConfig != null && farmingConfig.getStages() != null;
+            if (isFarmable && farmingConfig.getStageSetAfterHarvest() != null)
+            {
+                return true;
+            }
 
             Holder<ChunkStore> blockEntity = blockType.getBlockEntity();
             return blockEntity != null && blockEntity.getComponent(FarmingBlock.getComponentType()) != null;
@@ -215,12 +226,14 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 Item item = stringItemEntry.getValue();
                 if(checkFarmableItem(item))
                 {
-                    getFarmableBlocks().add(item.getBlockId());
+                    //if(!getFarmableBlocks().contains(item.getBlockId()))
+                        getFarmableBlocks().add(item.getBlockId());
                 } else {
                     getFarmableBlocks().remove(item.getBlockId());
                 }
             }
             HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s", String.valueOf(getFarmableBlocks().size()), FormatUtil.nanosToString(System.nanoTime() - start));
+            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", getFarmableBlocks());
         } catch (Exception e) {
             HytaleLogger.forEnclosingClass().at(Level.WARNING).withCause(e).log("Failed to scan for farmable blocks!");
         }
