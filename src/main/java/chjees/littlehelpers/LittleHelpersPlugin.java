@@ -147,19 +147,19 @@ public class LittleHelpersPlugin extends JavaPlugin {
     }
 
     private void onItemAssetsRemoved(@Nonnull RemovedAssetsEvent<String, Item, DefaultAssetMap<String, Item>> event) {
+        //Does not matter whether the asset has been removed or changed.
         for (String removedItemId : event.getRemovedAssets())
         {
             HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! %s", removedItemId);
             farmableBlocks.remove(removedItemId);
-            /*if(farmableBlocks.remove(removedItemId))
-            {
-                HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Removed] Removed farmable block: %s", removedItemId);
-            }*/
         }
     }
 
     private void onItemAssetsChanged(@Nonnull LoadedAssetsEvent<String, Item, DefaultAssetMap<String, Item>> event) {
-        //HytaleLogger.getLogger().at(Level.INFO).log("Assets changed! %s", event.getQuery());
+        //Only care if the asset has changed, not initial loading.
+        if(!event.isInitial())
+            return;
+
         for (Item item : event.getLoadedAssets().values())
         {
             String itemBlockId = item.getBlockId();
@@ -169,15 +169,9 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 if(!farmableBlocks.contains(itemBlockId))
                 {
                     farmableBlocks.add(itemBlockId);
-                    //HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Changed|Add] Added farmable block: %s", itemBlockId);
                 }
             } else {
                 farmableBlocks.remove(itemBlockId);
-                /*if(farmableBlocks.contains(itemBlockId))
-                {
-                    farmableBlocks.remove(itemBlockId);
-                    HytaleLogger.forEnclosingClass().at(Level.INFO).log("[Changed|Remove] Removed farmable block: %s", itemBlockId);
-                }*/
             }
         }
     }

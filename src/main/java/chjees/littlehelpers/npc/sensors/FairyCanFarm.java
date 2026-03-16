@@ -1,11 +1,10 @@
 package chjees.littlehelpers.npc.sensors;
 
-import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyCanFarm;
+import com.hypixel.hytale.common.util.FormatUtil;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
-import com.hypixel.hytale.math.block.BlockCubeUtil;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
@@ -20,15 +19,15 @@ import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FairyCanFarm extends SensorBase {
     private final int scanRange;
-    private static Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_Stage_StageFinal");
+    private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_StageFinal");
+    //private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_Stage_StageFinal");
+    //private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_StageFinal");
     public FairyCanFarm(@Nonnull BuilderFairyCanFarm builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);
 
@@ -54,57 +53,70 @@ public class FairyCanFarm extends SensorBase {
         World world = store.getExternalData().getWorld();
         Store<ChunkStore> chunkStore = world.getChunkStore().getStore();
 
+        long start = System.nanoTime();
+        int iterations = 0;
 
-        //Block type checking. (Invert search result to break out early)
-        boolean foundBlock = !BlockCubeUtil.forEachBlock(originPosition.x, originPosition.y, originPosition.z, scanRange, scanRange, scanRange, null, (x, y, z, _) -> {
-            //Get the chunk the block is in.
-            long chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
-            Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
-            if(chunkReference == null)
-                return  true;
+        boolean foundValidBlock = false; //In case we find a valid block, break out of all loops.
 
-            WorldChunk worldChunk = chunkStore.getComponent(chunkReference, WorldChunk.getComponentType());
-            assert worldChunk != null;
+        //Boring old three deep nested loop.
+        int halfRadius = scanRange / 2;
+        int west = originPosition.x - halfRadius;
+        int east = originPosition.x + halfRadius;
+        int north = originPosition.z - halfRadius;
+        int south = originPosition.z + halfRadius;
+        int top = originPosition.y - halfRadius;
+        int bottom = originPosition.y + halfRadius;
+        if(bottom < 0)
+            bottom = 0;
 
-            //The data we care about.
-            int blockRawID = worldChunk.getBlock(x, y, z);
-            BlockType blockType = worldChunk.getBlockType(x, y, z);
-            if(blockType != null) //Break out early if we found a viable block. (Invert the result)
+
+        for (int loopX = west; loopX <= east && !foundValidBlock; loopX++)
+        {
+            for (int loopZ = north; loopZ <= south && !foundValidBlock; loopZ++)
             {
-                //Break out early for types like Empty.
-                String blockId = blockType.getId();
-                if(blockId.equals("Empty"))
-                    return true;
-
-                //Criteria
-                //1. If a block id is prefixed with a star it's a block state.
-                //2. Look for a block state definition where it's at the finished stage.
-                // TODO: Look for a better way that does require tearing out my hair.
-                Matcher blockIdMatcher = BlockIdPattern.matcher(blockId);
-                boolean foundMatch = blockIdMatcher.matches();
-                HytaleLogger.forEnclosingClass().at(Level.INFO).atMostEvery(10, TimeUnit.SECONDS).log("Attempting match (%s): %s ## %s", Boolean.toString(foundMatch), Integer.toString(blockRawID), blockId);
-                if(foundMatch)
+                for (int loopY = top; loopY <= bottom && !foundValidBlock; loopY++)
                 {
-                    HytaleLogger.forEnclosingClass().at(Level.INFO).atMostEvery(3, TimeUnit.SECONDS).log("Match found: %s", blockIdMatcher.group(1));
+                    iterations++;
+                    foundValidBlock = checkBlock(chunkStore, loopX, loopY, loopZ);
                 }
-                /*if(foundMatch && LittleHelpersPlugin.Instance().getFarmableBlocks().stream().anyMatch(s -> s.equals(blockIdMatcher.group(1))))
-                {
-                    //if(blockIdMatcher.group(0).equals(blockId))
-                        return false;
-                }*/
-
-                //We got a normal block. Skip.
-                return true;
             }
+        }
 
-            //Continue if we did not find the appropriate block.
-            return true;
-        });
+        HytaleLogger.forEnclosingClass().at(Level.INFO).log("foundValidBlock: %s; iterations: %s; Scanning blocks with custom algorithm took: %s", Boolean.toString(foundValidBlock), Integer.toString(iterations), FormatUtil.nanosToString(System.nanoTime() - start));
+        return foundValidBlock;
+    }
 
-        //Debug timing
-        //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! Took: %s", FormatUtil.nanosToString(System.nanoTime() - start));
+    private boolean checkBlock(Store<ChunkStore> chunkStore, int x, int y, int z)
+    {
+        //Get the chunk the block is in.
+        long chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
+        Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
+        if(chunkReference == null)
+            return false;
 
-        return foundBlock;
+        WorldChunk worldChunk = chunkStore.getComponent(chunkReference, WorldChunk.getComponentType());
+        assert worldChunk != null;
+
+        //The data we care about.
+        int blockRawID = worldChunk.getBlock(x, y, z);
+
+        BlockType blockType = BlockType.getAssetMap().getAsset(blockRawID);
+        if(blockType != null)
+        {
+            //Break out early for types like Empty.
+            String blockId = blockType.getId();
+            if(blockId.equals("Empty"))
+                return false;
+
+            Matcher blockIdMatcher = BlockIdPattern.matcher(blockId);
+            boolean matches = blockIdMatcher.matches();
+            if(matches)
+            {
+                HytaleLogger.forEnclosingClass().at(Level.INFO).log("Found a match: %s", blockType.getId());
+            }
+            return matches;
+        }
+        return  false;
     }
 
     @Override
