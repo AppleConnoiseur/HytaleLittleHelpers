@@ -10,7 +10,8 @@ import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.filters.builders.BuilderFairyRecruiter;
 import chjees.littlehelpers.npc.movement.builders.BuilderBodyFlyMotionMaintainDistance;
 import chjees.littlehelpers.npc.sensors.builders.*;
-import chjees.tools.npc.actions.builders.BuilderClearMessage;import chjees.tools.npc.actions.builders.BuilderVariablesOperation;
+import chjees.tools.npc.actions.builders.BuilderClearMessage;
+import chjees.tools.npc.actions.builders.BuilderVariablesOperation;
 import chjees.tools.npc.components.SimpleEntityMessageComponent;
 import chjees.tools.npc.components.VariablesComponent;
 import chjees.tools.npc.sensors.builders.BuilderSimpleEntityMessageSensor;
@@ -54,6 +55,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
     //Farming data
     private final ArrayList<String> harvestableBlocks = new ArrayList<>();
+    private final ArrayList<Integer> harvestableBlockIds = new ArrayList<>();
     private final HashMap<String, String> farmableItemToBlockTypeIds = new HashMap<>();
     public LittleHelpersPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -149,9 +151,13 @@ public class LittleHelpersPlugin extends JavaPlugin {
         //Does not matter whether the asset has been removed or changed.
         for (String removedItemId : event.getRemovedAssets())
         {
-            HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! %s", removedItemId);
-            harvestableBlocks.remove(removedItemId);
-            farmableItemToBlockTypeIds.remove(removedItemId);
+            if(farmableItemToBlockTypeIds.containsKey(removedItemId))
+            {
+                HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! Removing: %s", removedItemId);
+                harvestableBlockIds.remove(BlockType.getAssetMap().getIndex(farmableItemToBlockTypeIds.get(removedItemId)));
+                harvestableBlocks.remove(removedItemId);
+                farmableItemToBlockTypeIds.remove(removedItemId);
+            }
         }
     }
 
@@ -170,7 +176,9 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 //Recheck
                 if(finalStageBlockType == null)
                 {
+                    HytaleLogger.getLogger().at(Level.INFO).log("[Changed] Assets changed! Removing: %s", itemId);
                     //Remove because it failed the check.
+                    harvestableBlockIds.add(BlockType.getAssetMap().getIndex(farmableItemToBlockTypeIds.get(itemId)));
                     harvestableBlocks.remove(itemId);
                     farmableItemToBlockTypeIds.remove(itemId);
                 }
@@ -178,9 +186,13 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 //Check if the Item is valid for being added.
                 if(finalStageBlockType != null)
                 {
+                    HytaleLogger.getLogger().at(Level.INFO).log("[Changed] Assets changed! Adding: %s", itemId);
+
                     //Add to the system.
-                    harvestableBlocks.add(finalStageBlockType.getId());
-                    farmableItemToBlockTypeIds.put(itemId, finalStageBlockType.getId());
+                    String blockId = finalStageBlockType.getId();
+                    harvestableBlocks.add(blockId);
+                    farmableItemToBlockTypeIds.put(itemId, blockId);
+                    harvestableBlockIds.add(BlockType.getAssetMap().getIndex(blockId));
                 }
             }
         }
