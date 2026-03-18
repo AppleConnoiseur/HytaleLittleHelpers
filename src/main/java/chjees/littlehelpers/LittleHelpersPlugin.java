@@ -17,14 +17,13 @@ import chjees.tools.npc.sensors.builders.BuilderSimpleEntityMessageSensor;
 import chjees.tools.npc.sensors.builders.BuilderVariablesCompareSensor;
 import chjees.tools.npc.systems.SimpleEntityMessageSystem;
 import chjees.tools.npc.systems.VariablesSystem;
+import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.event.LoadedAssetsEvent;
 import com.hypixel.hytale.assetstore.event.RemovedAssetsEvent;
 import com.hypixel.hytale.assetstore.map.DefaultAssetMap;
-import com.hypixel.hytale.builtin.adventure.farming.states.FarmingBlock;
 import com.hypixel.hytale.common.util.FormatUtil;
 import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
@@ -34,13 +33,14 @@ import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.instructions.BodyMotion;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -54,7 +54,9 @@ public class LittleHelpersPlugin extends JavaPlugin {
     private ComponentType<EntityStore, SimpleEntityMessageComponent> messagesComponent;
 
     //Farming data
-    private final ArrayList<String> farmableBlocks = new ArrayList<>();
+    private final ArrayList<String> harvestableBlocks = new ArrayList<>();
+    private final HashMap<String, String> farmableItemToBlockTypeIds = new HashMap<>();
+    private int typeTagIndex;
 
     public LittleHelpersPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -82,6 +84,10 @@ public class LittleHelpersPlugin extends JavaPlugin {
         //Reacting to asset store changes
         eventRegistry.register(LoadedAssetsEvent.class, Item.class, this::onItemAssetsChanged);
         eventRegistry.register(RemovedAssetsEvent.class, Item.class, this::onItemAssetsRemoved);
+
+        //Caching
+        typeTagIndex = AssetRegistry.getTagIndex("Type");
+        HytaleLogger.forEnclosingClass().at(Level.INFO).log("`Type` tag index: %s", Integer.toString(typeTagIndex));
 
         //For hot swapping purposes
         var motionBuilder =  NPCCore.getBuilderManager().getFactory(BodyMotion.class);
@@ -151,7 +157,8 @@ public class LittleHelpersPlugin extends JavaPlugin {
         for (String removedItemId : event.getRemovedAssets())
         {
             HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! %s", removedItemId);
-            farmableBlocks.remove(removedItemId);
+            harvestableBlocks.remove(removedItemId);
+            farmableItemToBlockTypeIds.remove(removedItemId);
         }
     }
 
@@ -162,74 +169,119 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
         for (Item item : event.getLoadedAssets().values())
         {
-            String itemBlockId = item.getBlockId();
-
-            if(checkFarmableItem(item))
+            String itemId = item.getId();
+            //If we have the asset in the system, then re-check its validity.
+            BlockType finalStageBlockType = getHarvestableBlockTypeFromItem(item);
+            if(farmableItemToBlockTypeIds.containsKey(itemId))
             {
-                if(!farmableBlocks.contains(itemBlockId))
+                //Recheck
+                if(finalStageBlockType == null)
                 {
-                    farmableBlocks.add(itemBlockId);
+                    //Remove because it failed the check.
+                    harvestableBlocks.remove(itemId);
+                    farmableItemToBlockTypeIds.remove(itemId);
                 }
             } else {
-                farmableBlocks.remove(itemBlockId);
+                //Check if the Item is valid for being added.
+                if(finalStageBlockType != null)
+                {
+                    //Add to the system.
+                    harvestableBlocks.add(finalStageBlockType.getId());
+                    farmableItemToBlockTypeIds.put(itemId, finalStageBlockType.getId());
+                }
             }
         }
     }
 
     @Override
     protected void start() {
-        reloadFarmableBlocks();
+        reloadHarvestableBlocks();
     }
 
     @Override
     protected void shutdown() {
-        farmableBlocks.clear();
+        harvestableBlocks.clear();
+        farmableItemToBlockTypeIds.clear();
     }
 
-    /// Determines whether this Item is farmable.
-    private boolean checkFarmableItem(Item item)
+    /**
+     * Identifies and returns the {@link BlockType} of a <b>harvestable</b> {@link Item}.
+     * <h3>Criteria</h3>
+     * <ol>
+     *     <li>Checks if the item has a {@link BlockType}. Must be true.</li>
+     *     <li>Checks if the {@link BlockType} has {@link FarmingData}. Must be true.</li>
+     *     <li>Checks if the {@link BlockType} has a {@link BlockType} with the <i>Stage</i> of <b>&quot;StageFinal&quot;</b>. Must be true.</li>
+     * </ol>
+     * @param item Item type to check.
+     * @return {@link BlockType} if one is found. <b>null</b> if none is found.
+     */
+    private BlockType getHarvestableBlockTypeFromItem(Item item)
     {
-        if(item.hasBlockType())
+        //Only care about blocks.
+        var itemData = item.getData();
+        if(item.hasBlockType() && itemData != null)
         {
+            //Only care about blocks with the `Plant` tag.
+            String[] itemTags = itemData.getRawTags().get("Type");
+            if(itemTags != null && Arrays.stream(itemTags).noneMatch(s -> s.equals("Plant")))
+                return null;
+
             //Get the BlockType sub-data type for Item.
             BlockType blockType = BlockType.getAssetMap().getAsset(item.getBlockId());
             assert blockType != null;
 
+            //Must be a farmable block.
             FarmingData farmingConfig = blockType.getFarming();
-            boolean isFarmable = farmingConfig != null && farmingConfig.getStages() != null;
-            if (isFarmable && farmingConfig.getStageSetAfterHarvest() != null)
+            //boolean isFarmable = farmingConfig != null && farmingConfig.getStages() != null;
+            if (farmingConfig != null && farmingConfig.getStages() != null)
             {
-                return true;
-            }
+                //Get the final stage block type of this item.
+                BlockType finalStageBlockType = blockType.getBlockForState("StageFinal");
+                if(finalStageBlockType == null)
+                {
+                    //Not supposed to happen. Send out a warning.
+                    HytaleLogger.forEnclosingClass().at(Level.WARNING).log("Found harvestable Item in `%s` but the `StageFinal` stage is missing.", item.getId());
+                    return null;
+                }
 
-            Holder<ChunkStore> blockEntity = blockType.getBlockEntity();
-            return blockEntity != null && blockEntity.getComponent(FarmingBlock.getComponentType()) != null;
+                return finalStageBlockType;
+            }
         }
-        return false;
+        return null;
     }
 
-    private void reloadFarmableBlocks()
+    /**
+     * Scans for all possible harvestable blocks from <b>Items<b/>.
+     */
+    private void reloadHarvestableBlocks()
     {
-        farmableBlocks.clear();
+        //Tidy up old state data.
+        harvestableBlocks.clear();
+        farmableItemToBlockTypeIds.clear();
 
-        //Scan for all possible crops that can be harvested.
         try {
+            //Statistics
             long start = System.nanoTime();
+
+            //Scan the entire asset library of items.
             var itemAssets = AssetRegistry.getAssetStore(Item.class);
             for (Map.Entry<String, Item> stringItemEntry : itemAssets.getAssetMap().getAssetMap().entrySet()) {
                 Item item = stringItemEntry.getValue();
-                if(checkFarmableItem(item))
+
+                //Identify item as harvestable.
+                BlockType finalStageBlockType = getHarvestableBlockTypeFromItem(item);
+                if(finalStageBlockType != null)
                 {
-                    //if(!getFarmableBlocks().contains(item.getBlockId()))
-                        getFarmableBlocks().add(item.getBlockId());
-                } else {
-                    getFarmableBlocks().remove(item.getBlockId());
+                    harvestableBlocks.add(finalStageBlockType.getId());
+                    farmableItemToBlockTypeIds.put(item.getId(), finalStageBlockType.getId());
                 }
             }
-            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s", String.valueOf(getFarmableBlocks().size()), FormatUtil.nanosToString(System.nanoTime() - start));
-            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", getFarmableBlocks());
+
+            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s", String.valueOf(getHarvestableBlocks().size()), FormatUtil.nanosToString(System.nanoTime() - start));
+            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", harvestableBlocks);
+            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Item to Blocks: %s", farmableItemToBlockTypeIds);
         } catch (Exception e) {
-            HytaleLogger.forEnclosingClass().at(Level.WARNING).withCause(e).log("Failed to scan for farmable blocks!");
+            HytaleLogger.forEnclosingClass().at(Level.SEVERE).withCause(e).log("Failed to scan for farmable blocks!");
         }
     }
 
@@ -245,7 +297,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
         return messagesComponent;
     }
 
-    public ArrayList<String> getFarmableBlocks() {
-        return farmableBlocks;
+    public ArrayList<String> getHarvestableBlocks() {
+        return harvestableBlocks;
     }
 }
