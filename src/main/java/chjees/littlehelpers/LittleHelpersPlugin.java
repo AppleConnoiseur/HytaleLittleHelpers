@@ -36,6 +36,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.instructions.BodyMotion;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
     //Farming data
     private final ArrayList<String> harvestableBlocks = new ArrayList<>();
-    private final ArrayList<Integer> harvestableBlockIds = new ArrayList<>();
+    private final IntArrayList harvestableBlockIds = new IntArrayList();
     private final HashMap<String, String> farmableItemToBlockTypeIds = new HashMap<>();
     public LittleHelpersPlugin(@Nonnull JavaPluginInit init) {
         super(init);
@@ -154,7 +155,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
             if(farmableItemToBlockTypeIds.containsKey(removedItemId))
             {
                 HytaleLogger.getLogger().at(Level.INFO).log("[Removed] Assets changed! Removing: %s", removedItemId);
-                harvestableBlockIds.remove(BlockType.getAssetMap().getIndex(farmableItemToBlockTypeIds.get(removedItemId)));
+                harvestableBlockIds.removeInt(BlockType.getAssetMap().getIndex(farmableItemToBlockTypeIds.get(removedItemId)));
                 harvestableBlocks.remove(removedItemId);
                 farmableItemToBlockTypeIds.remove(removedItemId);
             }
@@ -278,14 +279,17 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 BlockType finalStageBlockType = getHarvestableBlockTypeFromItem(item);
                 if(finalStageBlockType != null)
                 {
-                    harvestableBlocks.add(finalStageBlockType.getId());
-                    farmableItemToBlockTypeIds.put(item.getId(), finalStageBlockType.getId());
+                    String finalBlockId = finalStageBlockType.getId();
+                    harvestableBlocks.add(finalBlockId);
+                    getHarvestableBlockIds().add(BlockType.getAssetMap().getIndex(finalBlockId));
+                    farmableItemToBlockTypeIds.put(item.getId(), finalBlockId);
                 }
             }
 
             HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s", String.valueOf(getHarvestableBlocks().size()), FormatUtil.nanosToString(System.nanoTime() - start));
-            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", harvestableBlocks);
-            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Item to Blocks: %s", farmableItemToBlockTypeIds);
+            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Block IDs: %s", harvestableBlockIds);
+            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", harvestableBlocks);
+            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Item to Blocks: %s", farmableItemToBlockTypeIds);
         } catch (Exception e) {
             HytaleLogger.forEnclosingClass().at(Level.SEVERE).withCause(e).log("Failed to scan for farmable blocks!");
         }
@@ -305,5 +309,9 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
     public ArrayList<String> getHarvestableBlocks() {
         return harvestableBlocks;
+    }
+
+    public IntArrayList getHarvestableBlockIds() {
+        return harvestableBlockIds;
     }
 }

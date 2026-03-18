@@ -1,10 +1,9 @@
 package chjees.littlehelpers.npc.sensors;
 
+import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyCanFarm;
-import com.hypixel.hytale.common.util.FormatUtil;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
@@ -19,15 +18,14 @@ import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FairyCanFarm extends SensorBase {
+    //Builder variables
     private final int scanRange;
-    private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_StageFinal");
-    //private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_Stage_StageFinal");
-    //private static final Pattern BlockIdPattern = Pattern.compile("\\*(.+)_State_Definitions_StageFinal");
+
+    //Working variables
+    private int blockEmptyId = Integer.MIN_VALUE;
+
     public FairyCanFarm(@Nonnull BuilderFairyCanFarm builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);
 
@@ -40,6 +38,11 @@ public class FairyCanFarm extends SensorBase {
             return  false;
         //Debug timing
         //long start = System.nanoTime();
+        if(blockEmptyId == Integer.MIN_VALUE)
+        {
+            //Set to `Empty` block Id.
+            blockEmptyId = BlockType.getAssetMap().getIndex(BlockType.EMPTY_KEY);
+        }
 
         //Relevant data to work with.
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
@@ -53,8 +56,8 @@ public class FairyCanFarm extends SensorBase {
         World world = store.getExternalData().getWorld();
         Store<ChunkStore> chunkStore = world.getChunkStore().getStore();
 
-        long start = System.nanoTime();
-        int iterations = 0;
+        //long start = System.nanoTime();
+        //int iterations = 0;
 
         boolean foundValidBlock = false; //In case we find a valid block, break out of all loops.
 
@@ -69,20 +72,19 @@ public class FairyCanFarm extends SensorBase {
         if(bottom < 0)
             bottom = 0;
 
-
         for (int loopX = west; loopX <= east && !foundValidBlock; loopX++)
         {
             for (int loopZ = north; loopZ <= south && !foundValidBlock; loopZ++)
             {
                 for (int loopY = top; loopY <= bottom && !foundValidBlock; loopY++)
                 {
-                    iterations++;
+                    //iterations++;
                     foundValidBlock = checkBlock(chunkStore, loopX, loopY, loopZ);
                 }
             }
         }
 
-        HytaleLogger.forEnclosingClass().at(Level.INFO).log("foundValidBlock: %s; iterations: %s; Scanning blocks with custom algorithm took: %s", Boolean.toString(foundValidBlock), Integer.toString(iterations), FormatUtil.nanosToString(System.nanoTime() - start));
+        //HytaleLogger.forEnclosingClass().at(Level.INFO).log("foundValidBlock: %s; iterations: %s; Scanning blocks with custom algorithm took: %s", Boolean.toString(foundValidBlock), Integer.toString(iterations), FormatUtil.nanosToString(System.nanoTime() - start));
         return foundValidBlock;
     }
 
@@ -100,23 +102,11 @@ public class FairyCanFarm extends SensorBase {
         //The data we care about.
         int blockRawID = worldChunk.getBlock(x, y, z);
 
-        BlockType blockType = BlockType.getAssetMap().getAsset(blockRawID);
-        if(blockType != null)
-        {
-            //Break out early for types like Empty.
-            String blockId = blockType.getId();
-            if(blockId.equals("Empty"))
-                return false;
+        //Skip Empty blocks.
+        if(blockRawID == blockEmptyId)
+            return  false;
 
-            Matcher blockIdMatcher = BlockIdPattern.matcher(blockId);
-            boolean matches = blockIdMatcher.matches();
-            if(matches)
-            {
-                HytaleLogger.forEnclosingClass().at(Level.INFO).log("Found a match: %s", blockType.getId());
-            }
-            return matches;
-        }
-        return  false;
+        return  LittleHelpersPlugin.Instance().getHarvestableBlockIds().contains(blockRawID);
     }
 
     @Override
