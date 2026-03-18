@@ -17,7 +17,6 @@ import chjees.tools.npc.sensors.builders.BuilderSimpleEntityMessageSensor;
 import chjees.tools.npc.sensors.builders.BuilderVariablesCompareSensor;
 import chjees.tools.npc.systems.SimpleEntityMessageSystem;
 import chjees.tools.npc.systems.VariablesSystem;
-import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.assetstore.AssetRegistry;
 import com.hypixel.hytale.assetstore.event.LoadedAssetsEvent;
 import com.hypixel.hytale.assetstore.event.RemovedAssetsEvent;
@@ -56,8 +55,6 @@ public class LittleHelpersPlugin extends JavaPlugin {
     //Farming data
     private final ArrayList<String> harvestableBlocks = new ArrayList<>();
     private final HashMap<String, String> farmableItemToBlockTypeIds = new HashMap<>();
-    private int typeTagIndex;
-
     public LittleHelpersPlugin(@Nonnull JavaPluginInit init) {
         super(init);
         instance = this;
@@ -84,10 +81,6 @@ public class LittleHelpersPlugin extends JavaPlugin {
         //Reacting to asset store changes
         eventRegistry.register(LoadedAssetsEvent.class, Item.class, this::onItemAssetsChanged);
         eventRegistry.register(RemovedAssetsEvent.class, Item.class, this::onItemAssetsRemoved);
-
-        //Caching
-        typeTagIndex = AssetRegistry.getTagIndex("Type");
-        HytaleLogger.forEnclosingClass().at(Level.INFO).log("`Type` tag index: %s", Integer.toString(typeTagIndex));
 
         //For hot swapping purposes
         var motionBuilder =  NPCCore.getBuilderManager().getFactory(BodyMotion.class);
@@ -209,6 +202,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
      * <h3>Criteria</h3>
      * <ol>
      *     <li>Checks if the item has a {@link BlockType}. Must be true.</li>
+     *     <li>Checks if the item has the `Plant` tag in the `Type` category.</li>
      *     <li>Checks if the {@link BlockType} has {@link FarmingData}. Must be true.</li>
      *     <li>Checks if the {@link BlockType} has a {@link BlockType} with the <i>Stage</i> of <b>&quot;StageFinal&quot;</b>. Must be true.</li>
      * </ol>
