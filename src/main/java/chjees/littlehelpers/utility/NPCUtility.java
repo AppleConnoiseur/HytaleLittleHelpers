@@ -1,25 +1,43 @@
 package chjees.littlehelpers.utility;
 
+import chjees.littlehelpers.LittleHelpersPlugin;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.hypixel.hytale.server.npc.role.Role;
-import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
+import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
+import  com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 
+/**
+ * Utility NPC functions for the Little Helpers mod.
+ */
 public class NPCUtility {
-    public static Player GetPlayerFromRole(@NonNullDecl Role role, @NonNullDecl Store<EntityStore> store) {
-        Ref<EntityStore> playerReference = role.getStateSupport().getInteractionIterationTarget();
-        if (playerReference == null) {
-            return null;
-        } else {
-            PlayerRef playerRefComponent = store.getComponent(playerReference, PlayerRef.getComponentType());
-            if (playerRefComponent == null) {
-                return null;
-            } else {
-                return store.getComponent(playerReference, Player.getComponentType());
-            }
-        }
+    /**
+     * Checks the {@link ChunkStore} for a harvestable {@link BlockType} for fairies.
+     * @param chunkStore Hytale {@link ChunkStore}.
+     * @param x X position of the block.
+     * @param y Y position of the block.
+     * @param z Z position of the block.
+     * @return <i>True</i> if the block at the x, y & z position is harvestable. <i>False</i> if it's not.
+     */
+    public static boolean checkHarvestableBlock(Store<ChunkStore> chunkStore, int x, int y, int z)
+    {
+        //Get the chunk the block is in.
+        long chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
+        Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
+        if(chunkReference == null)
+            return false;
+
+        WorldChunk worldChunk = chunkStore.getComponent(chunkReference, WorldChunk.getComponentType());
+        assert worldChunk != null;
+
+        //The data we care about.
+        int blockRawID = worldChunk.getBlock(x, y, z);
+
+        //Skip Empty blocks.
+        if(blockRawID == LittleHelpersPlugin.Instance().getBlockEmptyId())
+            return  false;
+
+        return  LittleHelpersPlugin.Instance().getHarvestableBlockIds().contains(blockRawID);
     }
 }

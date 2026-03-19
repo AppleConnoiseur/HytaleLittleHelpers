@@ -58,6 +58,8 @@ public class LittleHelpersPlugin extends JavaPlugin {
     private final ArrayList<String> harvestableBlocks = new ArrayList<>();
     private final IntArrayList harvestableBlockIds = new IntArrayList();
     private final HashMap<String, String> farmableItemToBlockTypeIds = new HashMap<>();
+    private int blockEmptyId = Integer.MIN_VALUE;
+
     public LittleHelpersPlugin(@Nonnull JavaPluginInit init) {
         super(init);
         instance = this;
@@ -201,6 +203,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
     @Override
     protected void start() {
+        setBlockEmptyId(BlockType.getAssetMap().getIndex(BlockType.EMPTY_KEY));
         reloadHarvestableBlocks();
     }
 
@@ -215,7 +218,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
      * <h3>Criteria</h3>
      * <ol>
      *     <li>Checks if the item has a {@link BlockType}. Must be true.</li>
-     *     <li>Checks if the item has the `Plant` tag in the `Type` category.</li>
+     *     <li>Checks if the item has the `Plant` tag in the `Type` category. Must be true.</li>
      *     <li>Checks if the {@link BlockType} has {@link FarmingData}. Must be true.</li>
      *     <li>Checks if the {@link BlockType} has a {@link BlockType} with the <i>Stage</i> of <b>&quot;StageFinal&quot;</b>. Must be true.</li>
      * </ol>
@@ -246,8 +249,18 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 BlockType finalStageBlockType = blockType.getBlockForState("StageFinal");
                 if(finalStageBlockType == null)
                 {
+                    //No final stage? Do we have a `Stage2` with a soft gatherable drop?
+                    BlockType stage2BlockType = blockType.getBlockForState("Stage2");
+                    if( stage2BlockType != null &&
+                        stage2BlockType.getGathering() != null &&
+                        stage2BlockType.getGathering().isSoft() )
+                    {
+                        //We do. Return this instead.
+                        return  stage2BlockType;
+                    }
+
                     //Not supposed to happen. Send out a warning.
-                    HytaleLogger.forEnclosingClass().at(Level.WARNING).log("Found harvestable Item in `%s` but the `StageFinal` stage is missing.", item.getId());
+                    HytaleLogger.forEnclosingClass().at(Level.WARNING).log("Found harvestable Item in `%s` but the `StageFinal` or `Stage2` stages are missing.", item.getId());
                     return null;
                 }
 
@@ -264,6 +277,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
     {
         //Tidy up old state data.
         harvestableBlocks.clear();
+        harvestableBlockIds.clear();
         farmableItemToBlockTypeIds.clear();
 
         try {
@@ -313,5 +327,13 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
     public IntArrayList getHarvestableBlockIds() {
         return harvestableBlockIds;
+    }
+
+    public int getBlockEmptyId() {
+        return blockEmptyId;
+    }
+
+    public void setBlockEmptyId(int blockEmptyId) {
+        this.blockEmptyId = blockEmptyId;
     }
 }

@@ -1,15 +1,13 @@
 package chjees.littlehelpers.npc.sensors;
 
-import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyCanFarm;
+import chjees.littlehelpers.utility.NPCUtility;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
@@ -19,12 +17,12 @@ import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+/**
+ * Checks in a wide area if there is a harvestable {@link BlockType}. Expensive check meant to not be called often.
+ */
 public class FairyCanFarm extends SensorBase {
     //Builder variables
     private final int scanRange;
-
-    //Working variables
-    private int blockEmptyId = Integer.MIN_VALUE;
 
     public FairyCanFarm(@Nonnull BuilderFairyCanFarm builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);
@@ -38,11 +36,6 @@ public class FairyCanFarm extends SensorBase {
             return  false;
         //Debug timing
         //long start = System.nanoTime();
-        if(blockEmptyId == Integer.MIN_VALUE)
-        {
-            //Set to `Empty` block Id.
-            blockEmptyId = BlockType.getAssetMap().getIndex(BlockType.EMPTY_KEY);
-        }
 
         //Relevant data to work with.
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
@@ -79,34 +72,13 @@ public class FairyCanFarm extends SensorBase {
                 for (int loopY = top; loopY <= bottom && !foundValidBlock; loopY++)
                 {
                     //iterations++;
-                    foundValidBlock = checkBlock(chunkStore, loopX, loopY, loopZ);
+                    foundValidBlock = NPCUtility.checkHarvestableBlock(chunkStore, loopX, loopY, loopZ);
                 }
             }
         }
 
         //HytaleLogger.forEnclosingClass().at(Level.INFO).log("foundValidBlock: %s; iterations: %s; Scanning blocks with custom algorithm took: %s", Boolean.toString(foundValidBlock), Integer.toString(iterations), FormatUtil.nanosToString(System.nanoTime() - start));
         return foundValidBlock;
-    }
-
-    private boolean checkBlock(Store<ChunkStore> chunkStore, int x, int y, int z)
-    {
-        //Get the chunk the block is in.
-        long chunkIndex = ChunkUtil.indexChunkFromBlock(x, z);
-        Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
-        if(chunkReference == null)
-            return false;
-
-        WorldChunk worldChunk = chunkStore.getComponent(chunkReference, WorldChunk.getComponentType());
-        assert worldChunk != null;
-
-        //The data we care about.
-        int blockRawID = worldChunk.getBlock(x, y, z);
-
-        //Skip Empty blocks.
-        if(blockRawID == blockEmptyId)
-            return  false;
-
-        return  LittleHelpersPlugin.Instance().getHarvestableBlockIds().contains(blockRawID);
     }
 
     @Override
