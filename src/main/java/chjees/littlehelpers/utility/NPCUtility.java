@@ -7,11 +7,23 @@ import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import  com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
+import com.hypixel.hytale.server.npc.sensorinfo.IPositionProvider;
 
 /**
  * Utility NPC functions for the Little Helpers mod.
  */
 public class NPCUtility {
+    /**
+     * Checks the {@link ChunkStore} for a harvestable {@link BlockType} for fairies.
+     * @param chunkStore Hytale {@link ChunkStore}.
+     * @param positionProvider Position provider for the block.
+     * @return <i>True</i> if the block at the x, y & z position is harvestable. <i>False</i> if it's not.
+     */
+    public static boolean checkHarvestableBlock(Store<ChunkStore> chunkStore, IPositionProvider positionProvider)
+    {
+        return checkHarvestableBlock(chunkStore, (int)positionProvider.getX(), (int)positionProvider.getY(), (int)positionProvider.getZ());
+    }
+
     /**
      * Checks the {@link ChunkStore} for a harvestable {@link BlockType} for fairies.
      * @param chunkStore Hytale {@link ChunkStore}.

@@ -10,6 +10,7 @@ import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.filters.builders.BuilderFairyRecruiter;
 import chjees.littlehelpers.npc.movement.builders.BuilderBodyFlyMotionMaintainDistance;
 import chjees.littlehelpers.npc.sensors.builders.*;
+import chjees.littlehelpers.utility.ItemUtility;
 import chjees.tools.npc.actions.builders.BuilderClearMessage;
 import chjees.tools.npc.actions.builders.BuilderVariablesOperation;
 import chjees.tools.npc.components.SimpleEntityMessageComponent;
@@ -27,7 +28,6 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
-import com.hypixel.hytale.server.core.asset.type.blocktype.config.farming.FarmingData;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
@@ -40,7 +40,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -173,7 +172,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
         {
             String itemId = item.getId();
             //If we have the asset in the system, then re-check its validity.
-            BlockType finalStageBlockType = getHarvestableBlockTypeFromItem(item);
+            BlockType finalStageBlockType = ItemUtility.getHarvestableBlockTypeFromItem(item);
             if(farmableItemToBlockTypeIds.containsKey(itemId))
             {
                 //Recheck
@@ -210,64 +209,8 @@ public class LittleHelpersPlugin extends JavaPlugin {
     @Override
     protected void shutdown() {
         harvestableBlocks.clear();
+        harvestableBlockIds.clear();
         farmableItemToBlockTypeIds.clear();
-    }
-
-    /**
-     * Identifies and returns the {@link BlockType} of a <b>harvestable</b> {@link Item}.
-     * <h3>Criteria</h3>
-     * <ol>
-     *     <li>Checks if the item has a {@link BlockType}. Must be true.</li>
-     *     <li>Checks if the item has the `Plant` tag in the `Type` category. Must be true.</li>
-     *     <li>Checks if the {@link BlockType} has {@link FarmingData}. Must be true.</li>
-     *     <li>Checks if the {@link BlockType} has a {@link BlockType} with the <i>Stage</i> of <b>&quot;StageFinal&quot;</b>. Must be true.</li>
-     * </ol>
-     * @param item Item type to check.
-     * @return {@link BlockType} if one is found. <b>null</b> if none is found.
-     */
-    private BlockType getHarvestableBlockTypeFromItem(Item item)
-    {
-        //Only care about blocks.
-        var itemData = item.getData();
-        if(item.hasBlockType() && itemData != null)
-        {
-            //Only care about blocks with the `Plant` tag.
-            String[] itemTags = itemData.getRawTags().get("Type");
-            if(itemTags != null && Arrays.stream(itemTags).noneMatch(s -> s.equals("Plant")))
-                return null;
-
-            //Get the BlockType sub-data type for Item.
-            BlockType blockType = BlockType.getAssetMap().getAsset(item.getBlockId());
-            assert blockType != null;
-
-            //Must be a farmable block.
-            FarmingData farmingConfig = blockType.getFarming();
-            //boolean isFarmable = farmingConfig != null && farmingConfig.getStages() != null;
-            if (farmingConfig != null && farmingConfig.getStages() != null)
-            {
-                //Get the final stage block type of this item.
-                BlockType finalStageBlockType = blockType.getBlockForState("StageFinal");
-                if(finalStageBlockType == null)
-                {
-                    //No final stage? Do we have a `Stage2` with a soft gatherable drop?
-                    BlockType stage2BlockType = blockType.getBlockForState("Stage2");
-                    if( stage2BlockType != null &&
-                        stage2BlockType.getGathering() != null &&
-                        stage2BlockType.getGathering().isSoft() )
-                    {
-                        //We do. Return this instead.
-                        return  stage2BlockType;
-                    }
-
-                    //Not supposed to happen. Send out a warning.
-                    HytaleLogger.forEnclosingClass().at(Level.WARNING).log("Found harvestable Item in `%s` but the `StageFinal` or `Stage2` stages are missing.", item.getId());
-                    return null;
-                }
-
-                return finalStageBlockType;
-            }
-        }
-        return null;
     }
 
     /**
@@ -290,7 +233,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 Item item = stringItemEntry.getValue();
 
                 //Identify item as harvestable.
-                BlockType finalStageBlockType = getHarvestableBlockTypeFromItem(item);
+                BlockType finalStageBlockType = ItemUtility.getHarvestableBlockTypeFromItem(item);
                 if(finalStageBlockType != null)
                 {
                     String finalBlockId = finalStageBlockType.getId();

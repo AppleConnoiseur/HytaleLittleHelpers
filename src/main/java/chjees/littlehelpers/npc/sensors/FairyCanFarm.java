@@ -69,7 +69,8 @@ public class FairyCanFarm extends SensorBase {
         {
             for (int loopZ = north; loopZ <= south && !foundValidBlock; loopZ++)
             {
-                for (int loopY = top; loopY <= bottom && !foundValidBlock; loopY++)
+                //Check from bottom up.
+                for (int loopY = bottom; loopY >= top && !foundValidBlock; loopY--)
                 {
                     //iterations++;
                     foundValidBlock = NPCUtility.checkHarvestableBlock(chunkStore, loopX, loopY, loopZ);

@@ -19,12 +19,12 @@ public class BuilderFairyFindClosestHarvestable extends BuilderSensorBase {
 
     @Override
     public String getShortDescription() {
-        return "Short description for FairyFindClosestHarvestable.";
+        return "Finds the closest harvestable block.";
     }
 
     @Override
     public String getLongDescription() {
-        return "Long description for FairyFindClosestHarvestable.";
+        return "Finds the closest harvestable block. Do not make the radius too big since this will be checked often.";
     }
 
     @Override
