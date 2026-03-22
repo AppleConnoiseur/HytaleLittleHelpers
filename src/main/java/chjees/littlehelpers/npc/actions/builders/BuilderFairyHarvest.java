@@ -1,6 +1,6 @@
 package chjees.littlehelpers.npc.actions.builders;
 
-import chjees.littlehelpers.npc.actions.FairyFarm;
+import chjees.littlehelpers.npc.actions.FairyHarvest;
 import com.google.gson.JsonElement;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
@@ -8,24 +8,26 @@ import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class BuilderFairyFarm extends BuilderActionBase {
+import java.util.List;
+
+public class BuilderFairyHarvest extends BuilderActionBase {
 
     @NullableDecl
     @Override
     public String getShortDescription() {
-        return "";
+        return "Harvests the targeted plant.";
     }
 
     @NullableDecl
     @Override
     public String getLongDescription() {
-        return "";
+        return "Harvests the targeted plant. Requires a valid block that is a plant.";
     }
 
     @NullableDecl
     @Override
     public Action build(BuilderSupport builderSupport) {
-        return new FairyFarm(this, builderSupport);
+        return new FairyHarvest(this, builderSupport);
     }
 
     @NullableDecl
@@ -35,7 +37,7 @@ public class BuilderFairyFarm extends BuilderActionBase {
     }
 
     @Override
-    public BuilderFairyFarm readConfig(JsonElement data) {
+    public BuilderFairyHarvest readConfig(JsonElement data) {
         return this;
     }
 }
