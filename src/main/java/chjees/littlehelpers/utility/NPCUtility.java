@@ -17,7 +17,7 @@ public class NPCUtility {
      * Checks the {@link ChunkStore} for a harvestable {@link BlockType} for fairies.
      * @param chunkStore Hytale {@link ChunkStore}.
      * @param positionProvider Position provider for the block.
-     * @return <i>True</i> if the block at the x, y & z position is harvestable. <i>False</i> if it's not.
+     * @return <i>True</i> if the block at the x, y &amp; z position is harvestable. <i>False</i> if it's not.
      */
     public static boolean checkHarvestableBlock(Store<ChunkStore> chunkStore, IPositionProvider positionProvider)
     {
@@ -30,7 +30,7 @@ public class NPCUtility {
      * @param x X position of the block.
      * @param y Y position of the block.
      * @param z Z position of the block.
-     * @return <i>True</i> if the block at the x, y & z position is harvestable. <i>False</i> if it's not.
+     * @return <i>True</i> if the block at the x, y &amp; z position is harvestable. <i>False</i> if it's not.
      */
     public static boolean checkHarvestableBlock(Store<ChunkStore> chunkStore, int x, int y, int z)
     {

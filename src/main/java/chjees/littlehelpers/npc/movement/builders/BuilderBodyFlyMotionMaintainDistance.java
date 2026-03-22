@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * @deprecated Slate for removal.
  */
+@Deprecated
 public class BuilderBodyFlyMotionMaintainDistance  extends BuilderBodyMotionBase {
     public static final String MIN_RANGE_PARAMETER = "MinRange";
     public static final String MAX_RANGE_PARAMETER = "MaxRange";

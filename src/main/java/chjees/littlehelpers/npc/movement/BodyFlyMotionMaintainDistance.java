@@ -34,6 +34,7 @@ import java.util.logging.Level;
 /**
  * @deprecated Slate for removal.
  */
+@Deprecated
 public class BodyFlyMotionMaintainDistance  extends BodyMotionBase {
     protected static final ComponentType<EntityStore, TransformComponent> TRANSFORM_COMPONENT_TYPE = TransformComponent.getComponentType();
     protected final double[] initialDesiredDistanceRange;

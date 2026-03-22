@@ -49,7 +49,7 @@ public class FairyComponent  implements Component<EntityStore> {
         setHomeCoordinatesSet(other.isHomeCoordinatesSet());
     }
 
-    public  static final BuilderCodec<FairyComponent> CODEC =
+    public static final BuilderCodec<FairyComponent> CODEC =
             BuilderCodec.builder(FairyComponent.class, FairyComponent::new).
             append(new KeyedCodec<>("PlayerRecruiter", BuilderCodec.UUID_BINARY),
                     FairyComponent::setPlayerRecruiter,

@@ -36,6 +36,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
+import com.hypixel.hytale.server.npc.instructions.Action;
 import com.hypixel.hytale.server.npc.instructions.BodyMotion;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
@@ -95,12 +96,12 @@ public class LittleHelpersPlugin extends JavaPlugin {
         eventRegistry.register(RemovedAssetsEvent.class, Item.class, this::onItemAssetsRemoved);
 
         //For hot swapping purposes
-        var motionBuilder =  NPCCore.getBuilderManager().getFactory(BodyMotion.class);
-        var builderNames = motionBuilder.getBuilderNames();
+        var checkBuilder =  NPCCore.getBuilderManager().getFactory(Action.class);
+        var builderNames = checkBuilder.getBuilderNames();
 
         //Only inject if the builder for MaintainDistanceFly does not exist.
         //Ensure injections are only done once.
-        if(!builderNames.contains("LHMaintainDistanceFly"))
+        if(!builderNames.contains("BuilderFairySetHome"))
         {
             //Sub-mod: NPC tools
             //Components
@@ -127,9 +128,6 @@ public class LittleHelpersPlugin extends JavaPlugin {
             //Main mod: Little Helpers
             //Interactions
             Interaction.CODEC.register("LHFairyBell", FairyBellInteraction.class, FairyBellInteraction.CODEC);
-
-            //Motion components
-            NPCCore.registerCoreComponentType("LHMaintainDistanceFly", BuilderBodyFlyMotionMaintainDistance::new);
 
             //Action components
             NPCCore.registerCoreComponentType("LHRecruitFairy", BuilderRecruitFairyAction::new);
