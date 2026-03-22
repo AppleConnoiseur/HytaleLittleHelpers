@@ -15,6 +15,14 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <p>Multi-use sensor which matches if all of these criteria are true:</p>
+ * <ul>
+ *     <li><b>foodNeedRange</b> is within its set range.</li>
+ *     <li><b>essenceNeedRange</b> is within its set range.</li>
+ *     <li><b>happinessNeedRange</b> is within its set range.</li>
+ * </ul>
+ */
 @SuppressWarnings("FieldMayBeFinal")
 public class FairyNeedsSensor extends SensorBase {
     private RangeDouble foodNeedRange;

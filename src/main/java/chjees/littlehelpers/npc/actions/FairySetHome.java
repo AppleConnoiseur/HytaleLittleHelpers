@@ -17,9 +17,11 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <p>Sets the new home of the fairy.</p>
+ */
 public class FairySetHome extends ActionBase {
-    @SuppressWarnings("FieldMayBeFinal")
-    private boolean unsetHome;
+    private final boolean unsetHome;
 
     public FairySetHome(@NonNullDecl BuilderFairySetHome builderActionBase, BuilderSupport builderSupport) {
         super(builderActionBase);

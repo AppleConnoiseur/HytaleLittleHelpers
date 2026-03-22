@@ -31,6 +31,9 @@ import javax.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+/**
+ * @deprecated Slate for removal.
+ */
 public class BodyFlyMotionMaintainDistance  extends BodyMotionBase {
     protected static final ComponentType<EntityStore, TransformComponent> TRANSFORM_COMPONENT_TYPE = TransformComponent.getComponentType();
     protected final double[] initialDesiredDistanceRange;

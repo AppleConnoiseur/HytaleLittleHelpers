@@ -10,6 +10,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.util.UUID;
 
+/**
+ * Data container for all values relevant for maintaining recruited fairies.
+ */
 public class FairyComponent  implements Component<EntityStore> {
     /// The player which employs the fairy.
     private UUID playerRecruiter;
@@ -23,8 +26,6 @@ public class FairyComponent  implements Component<EntityStore> {
     private int[] homeCoordinates;
     /// If true home co-ordinates are set.
     private boolean homeCoordinatesSet;
-
-    /* TODO: Implement logic for detecting player call */
 
     public  FairyComponent()
     {

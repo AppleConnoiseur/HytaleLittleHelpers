@@ -9,6 +9,9 @@ import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+/**
+ * Ensures all NPCs have the {@link VariablesComponent} component upon spawning.
+ */
 public class VariablesSystem extends RefSystem<EntityStore> {
     private final ComponentType<EntityStore, VariablesComponent> variablesComponentType;
 

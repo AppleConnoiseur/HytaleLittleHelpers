@@ -16,6 +16,9 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Checks if the interactor is the player which recruited them.
+ */
 @SuppressWarnings("FieldMayBeFinal")
 public class FairyRecruiterSensor extends SensorBase {
     public FairyRecruiterSensor(@Nonnull BuilderFairyRecruiterSensor builder, @Nonnull BuilderSupport builderSupport)

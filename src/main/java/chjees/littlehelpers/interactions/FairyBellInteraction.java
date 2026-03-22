@@ -25,14 +25,17 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.logging.Level;
 
-@SuppressWarnings("RedundantTypeArguments")
+/**
+ * <p>This <b>Interaction</b> broadcasts a message to all nearby fairies.</p>
+ * <p>Requires a {@link SimpleEntityMessageComponent} on the entity for it to work.</p>
+ */
 public class FairyBellInteraction extends SimpleInstantInteraction {
     @Nonnull
     public static final BuilderCodec<FairyBellInteraction> CODEC = BuilderCodec.builder(
                     FairyBellInteraction.class, FairyBellInteraction::new, SimpleInstantInteraction.CODEC
             )
             .documentation("Interacts with fairies over a spherical range.")
-            .<String>appendInherited(
+            .appendInherited(
                     new KeyedCodec<>("Context", Codec.STRING),
                     (interaction, s) -> interaction.context = s,
                     interaction -> interaction.context,
@@ -41,7 +44,7 @@ public class FairyBellInteraction extends SimpleInstantInteraction {
             .documentation("The provided context for the bell action.")
             .addValidator(Validators.nonNull())
             .add()
-            .<Double>appendInherited(
+            .appendInherited(
                     new KeyedCodec<>("Range", Codec.DOUBLE),
                     (interaction, s) -> interaction.range = s,
                     interaction -> interaction.range,

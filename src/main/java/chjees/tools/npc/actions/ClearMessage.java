@@ -18,6 +18,9 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+/**
+ * <p>Explicitly clear a message from the {@link SimpleEntityMessageComponent}.</p>
+ */
 public class ClearMessage extends ActionBase {
     private final String messageKey;
     public ClearMessage(@NonNullDecl BuilderClearMessage builder, BuilderSupport builderSupport) {

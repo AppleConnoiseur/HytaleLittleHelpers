@@ -13,6 +13,10 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.util.EnumSet;
 
+/**
+ * <p>Builder for {@link RecruitFairyAction}.</p>
+ * <p>Recruits the fairy and initializes the {@link chjees.littlehelpers.npc.components.FairyComponent} for it with preset data.</p>
+ */
 public class BuilderRecruitFairyAction  extends BuilderActionBase {
     @SuppressWarnings("FieldMayBeFinal")
     private AssetHolder recruitedAppearance = new AssetHolder();

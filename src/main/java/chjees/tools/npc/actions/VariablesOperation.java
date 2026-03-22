@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+/**
+ * <p>Performs mathematical operations on the {@link VariablesComponent}.</p>
+ */
 public class VariablesOperation extends ActionBase {
     /// Operation to perform on the variable.
     private final Operation operation;

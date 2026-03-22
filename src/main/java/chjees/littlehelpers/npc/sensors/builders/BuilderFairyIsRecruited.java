@@ -9,6 +9,9 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 
+/**
+ * Builder for {@link FairyIsRecruited} that checks if the fairy is recruited by someone.
+ */
 public class BuilderFairyIsRecruited extends BuilderSensorBase {
 
     public BuilderFairyIsRecruited() {

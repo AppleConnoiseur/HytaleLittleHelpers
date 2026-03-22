@@ -45,6 +45,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * <p>Main entrance class for the <b>Little Helpers</b> mod.</p>
+ * <h1>Little Helpers Plugin</h1>
+ * <p>Setups the plugin for Hytale.</p>
+ * <p>TODO: Add more information later.</p>
+ * @author ChJees
+ */
 public class LittleHelpersPlugin extends JavaPlugin {
     //Singleton access
     private static LittleHelpersPlugin instance;

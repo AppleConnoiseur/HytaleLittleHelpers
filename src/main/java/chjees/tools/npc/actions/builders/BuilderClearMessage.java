@@ -10,6 +10,10 @@ import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+/**
+ * <p>Builder for {@link ClearMessage}.</p>
+ * <p>Explicitly clear a message from the {@link chjees.tools.npc.components.SimpleEntityMessageComponent}.</p>
+ */
 public class BuilderClearMessage extends BuilderActionBase {
     private final StringHolder messageKey = new StringHolder();
 

@@ -11,7 +11,9 @@ import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.SensorBase;
-import com.hypixel.hytale.server.npc.entities.NPCEntity;import com.hypixel.hytale.server.npc.movement.controllers.MotionController;import com.hypixel.hytale.server.npc.role.Role;
+import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.instructions.Sensor;
+import com.hypixel.hytale.server.npc.movement.controllers.MotionController;import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.EntityPositionProvider;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
@@ -21,6 +23,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+/**
+ * <p>Reactive {@link Sensor} for simple messages.</p>
+ */
 public class SimpleEntityMessageSensor extends SensorBase {
     private final String messageKey;
     private final boolean useEntity;

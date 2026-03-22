@@ -12,9 +12,13 @@ import com.hypixel.hytale.server.core.util.thread.TickingThread;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+/**
+ *  <p>Ticks all entities with the {@link FairyComponent}'s.</p>
+ *  <p>It takes about 60 minutes to fully drain <b>Food</b> and <b>Essence</b> needs.</p>
+ *  <p>It takes around 30 to 60 minutes to drain the happiness need. Each lacking <b>Food</b> and <b>Essence</b> need additively add to the drain by 100%.</p>
+ */
 public class FairyNeedsSystem extends EntityTickingSystem<EntityStore> {
-    @SuppressWarnings("FieldMayBeFinal")
-    private ComponentType<EntityStore, FairyComponent> fairyComponentType;
+    private final ComponentType<EntityStore, FairyComponent> fairyComponentType;
 
     public FairyNeedsSystem(ComponentType<EntityStore, FairyComponent> componentType)
     {

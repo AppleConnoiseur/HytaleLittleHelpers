@@ -13,6 +13,9 @@ import com.hypixel.hytale.server.npc.role.Role;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Filter is true if the entity being filtered is the one which recruited the fairy.
+ */
 public class FairyRecruiter extends EntityFilterBase {
     public static final int COST = 300;
 

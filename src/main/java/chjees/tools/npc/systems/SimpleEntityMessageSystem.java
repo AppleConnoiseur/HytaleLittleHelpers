@@ -4,15 +4,14 @@ import chjees.tools.npc.components.SimpleEntityMessageComponent;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-
+/**
+ * Ensures all NPCs have the {@link SimpleEntityMessageComponent} component upon spawning.
+ */
 public class SimpleEntityMessageSystem extends RefSystem<EntityStore> {
     @SuppressWarnings("FieldMayBeFinal")
     private final ComponentType<EntityStore, SimpleEntityMessageComponent> simpleMessageComponentType;

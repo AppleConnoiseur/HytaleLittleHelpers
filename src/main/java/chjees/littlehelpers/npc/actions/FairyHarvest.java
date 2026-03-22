@@ -19,11 +19,16 @@ import com.hypixel.hytale.server.npc.corecomponents.ActionBase;
 import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.IPositionProvider;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
+import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+/**
+ * <p>Harvests the block provided by the {@link PositionProvider}.</p>
+ * <p><b>Note:</b> This is an instant action.</p>
+ */
 public class FairyHarvest extends ActionBase {
 
     public FairyHarvest(@NonNullDecl BuilderFairyHarvest builderActionBase, BuilderSupport builderSupport) {

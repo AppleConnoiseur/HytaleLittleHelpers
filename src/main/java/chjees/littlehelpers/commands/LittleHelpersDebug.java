@@ -19,6 +19,9 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * Debugging commands for developing this mod.
+ */
 public class LittleHelpersDebug extends AbstractTargetEntityCommand {
     public LittleHelpersDebug(String name, String description) {
         super(name, description);

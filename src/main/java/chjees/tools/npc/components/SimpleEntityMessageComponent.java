@@ -5,14 +5,15 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.Component;
-import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import java.util.Map;
-import java.util.logging.Level;
 
+/**
+ * <p>Storage of messages sent from various sources.</p>
+ */
 public class SimpleEntityMessageComponent implements Component<EntityStore> {
     public final static MapCodec<SimpleEntityMessage, Map<String,SimpleEntityMessage>> MESSAGES_CODEC =
             new MapCodec<>(SimpleEntityMessage.CODEC, Object2ObjectOpenHashMap::new, false);

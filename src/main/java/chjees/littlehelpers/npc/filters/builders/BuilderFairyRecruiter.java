@@ -9,6 +9,10 @@ import com.hypixel.hytale.server.npc.corecomponents.IEntityFilter;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderEntityFilterBase;
 import javax.annotation.Nonnull;
 
+/**
+ * <p>Builder class for {@link FairyRecruiter}.</p>
+ * <p>Filter is true if the entity being filtered is the one which recruited the fairy.</p>
+ */
 public class BuilderFairyRecruiter extends BuilderEntityFilterBase {
     public BuilderFairyRecruiter() {
     }

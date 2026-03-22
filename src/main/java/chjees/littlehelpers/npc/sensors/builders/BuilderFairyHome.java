@@ -10,6 +10,12 @@ import com.hypixel.hytale.server.npc.asset.builder.validators.IntRangeValidator;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 
+/**
+ * <p>Builder for {@link FairyHome} that checks if the fairy is in the home area.</p>
+ * <p><b>Default</b> behavior checks if the fairy is inside the home zone with the cubic radius of 30 units.</p>
+ * <p>If <b>Outside</b> is set to true it inverts the behavior and instead checks if the fairy is outside the home zone.</p>
+ * <p>If <b>UsePosition</b> is set to true then this {@link Sensor} can be used to provide the home center position.</p>
+ */
 public class BuilderFairyHome extends BuilderSensorBase {
     private int homeRadius;
     private boolean usePosition;

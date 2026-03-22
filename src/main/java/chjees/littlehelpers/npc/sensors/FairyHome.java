@@ -16,6 +16,9 @@ import javax.annotation.Nonnull;
 import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+/**
+ * Checks if the fairy is inside the home area. Can be inverted and provide a position of the home area center.
+ */
 public class FairyHome extends SensorBase {
     private final int homeRadiusSq;
     private final boolean usePosition;

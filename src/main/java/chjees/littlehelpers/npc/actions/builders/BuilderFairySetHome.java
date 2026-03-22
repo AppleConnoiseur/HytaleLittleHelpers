@@ -8,6 +8,10 @@ import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+/**
+ * <p>Builder for {@link FairySetHome}.</p>
+ * <p>Sets the new home of the fairy.</p>
+ */
 public class BuilderFairySetHome extends BuilderActionBase {
     private boolean unsetHome;
 

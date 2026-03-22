@@ -10,6 +10,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import java.util.Map;
 
+/**
+ * <p>Storage of variables for mathematical operations.</p>
+ */
 public class VariablesComponent implements Component<EntityStore> {
     public final static MapCodec<Double, Map<String,Double>> VARIABLES_CODEC = new MapCodec<>(Codec.DOUBLE, Object2ObjectOpenHashMap::new);
     private Map<String, Double> variables = new Object2ObjectOpenHashMap<>();

@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
+/**
+ *  Performs simple mathematical comparisons with variables from the {@link VariablesComponent}.
+ */
 public class VariablesCompareSensor extends SensorBase {
     /// Operation to perform on the variable.
     private final Operation operation;

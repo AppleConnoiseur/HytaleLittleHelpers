@@ -11,6 +11,10 @@ import com.hypixel.hytale.server.npc.asset.builder.validators.StringNotEmptyVali
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 
+/**
+ * <p>Builder for {@link SimpleEntityMessageSensor}.</p>
+ * <p>Reactive {@link Sensor} for simple messages.</p>
+ */
 public class BuilderSimpleEntityMessageSensor extends BuilderSensorBase {
     private final StringHolder messageKey = new StringHolder();
     private final BooleanHolder useEntity = new BooleanHolder();

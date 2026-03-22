@@ -5,6 +5,9 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import java.util.UUID;
 
+/**
+ * Represents a stored message that hasn't been handled by the NPC yet.
+ */
 public class SimpleEntityMessage {
     public static final BuilderCodec<SimpleEntityMessage> CODEC = BuilderCodec.builder(SimpleEntityMessage.class, SimpleEntityMessage::new)
             .append(new KeyedCodec<>("Message", BuilderCodec.STRING),

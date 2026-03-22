@@ -13,6 +13,10 @@ import com.hypixel.hytale.server.npc.asset.builder.validators.StringNotEmptyVali
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
 
+/**
+ * <p>Builder for {@link VariablesCompareSensor}.</p>
+ * <p>Performs simple mathematical comparisons with variables from the {@link chjees.tools.npc.components.VariablesComponent}.</p>
+ */
 public class BuilderVariablesCompareSensor extends BuilderSensorBase {
     private final EnumHolder<VariablesCompareSensor.Operation> operation = new EnumHolder<>();
     private final DoubleHolder value = new DoubleHolder();

@@ -13,6 +13,10 @@ import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
+/**
+ * <p>Builder for {@link VariablesOperation}.</p>
+ * <p>Performs mathematical operations on the {@link chjees.tools.npc.components.VariablesComponent}.</p>
+ */
 public class BuilderVariablesOperation extends BuilderActionBase {
     private final EnumHolder<VariablesOperation.Operation> operation = new EnumHolder<>();
     private final DoubleHolder value = new DoubleHolder();

@@ -12,6 +12,21 @@ import com.hypixel.hytale.server.npc.instructions.Sensor;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <p>Multi-use sensor for class {@link FairyNeedsSensor} which matches if all of these criteria are true:</p>
+ * <ul>
+ *     <li><b>foodNeedRange</b> is within its set range.</li>
+ *     <li><b>essenceNeedRange</b> is within its set range.</li>
+ *     <li><b>happinessNeedRange</b> is within its set range.</li>
+ * </ul>
+ * <p>In order to detect if a `need` is beneath a threshold only set that range to be lower.</p>
+ * <pre><code>
+ *     {
+ *         "Type":"LHFairyNeedsSatiated",
+ *         "FoodNeed": [0.0, 0.5]
+ *     }
+ * </code></pre>
+ */
 public class BuilderFairyNeedsSensor extends BuilderSensorBase {
     private final NumberArrayHolder foodNeedRange = new NumberArrayHolder();
     private final NumberArrayHolder essenceNeedRange = new NumberArrayHolder();

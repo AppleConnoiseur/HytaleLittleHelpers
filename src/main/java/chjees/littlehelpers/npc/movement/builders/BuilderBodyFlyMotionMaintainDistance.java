@@ -19,6 +19,9 @@ import com.hypixel.hytale.server.npc.validators.NPCLoadTimeValidationHelper;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * @deprecated Slate for removal.
+ */
 public class BuilderBodyFlyMotionMaintainDistance  extends BuilderBodyMotionBase {
     public static final String MIN_RANGE_PARAMETER = "MinRange";
     public static final String MAX_RANGE_PARAMETER = "MaxRange";

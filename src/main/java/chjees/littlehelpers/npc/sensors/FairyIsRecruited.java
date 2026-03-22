@@ -13,6 +13,9 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Checks if the fairy is recruited by someone.
+ */
 public class FairyIsRecruited extends SensorBase {
     public FairyIsRecruited(@Nonnull BuilderFairyIsRecruited builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);

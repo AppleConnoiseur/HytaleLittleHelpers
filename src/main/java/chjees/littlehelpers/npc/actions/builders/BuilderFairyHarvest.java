@@ -6,10 +6,16 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderActionBase;
 import com.hypixel.hytale.server.npc.instructions.Action;
+import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.util.List;
 
+/**
+ * <p>Builder for {@link FairyHarvest}.</p>
+ * <p>Harvests the block provided by the {@link PositionProvider}.</p>
+ * <p><b>Note:</b> This is an instant action.</p>
+ */
 public class BuilderFairyHarvest extends BuilderActionBase {
 
     @NullableDecl

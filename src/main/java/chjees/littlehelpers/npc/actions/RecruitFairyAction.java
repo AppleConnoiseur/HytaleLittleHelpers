@@ -20,6 +20,9 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 
+/**
+ * <p>Recruits the fairy and initializes the {@link FairyComponent} for it with preset data.</p>
+ */
 public class RecruitFairyAction extends ActionBase {
     @SuppressWarnings("FieldMayBeFinal")
     private String recruitedAppearance;
