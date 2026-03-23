@@ -27,7 +27,7 @@ public class FairyHome extends SensorBase {
 
     public FairyHome(@Nonnull BuilderFairyHome builder, @Nonnull BuilderSupport builderSupport) {
         super(builder);
-        int homeRadius = builder.getHomeRadius();
+        int homeRadius = builder.getHomeRadius().get(builderSupport.getExecutionContext());
         homeRadiusSq = homeRadius * homeRadius;
         usePosition = builder.getUsePosition();
         checkOutside = builder.getOutside();

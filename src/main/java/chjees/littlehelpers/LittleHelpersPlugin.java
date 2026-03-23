@@ -4,6 +4,7 @@ import chjees.littlehelpers.commands.LittleHelpersDebug;
 import chjees.littlehelpers.entity.systems.FairyNeedsSystem;
 import chjees.littlehelpers.events.LittleHelpersDebuggingEvent;
 import chjees.littlehelpers.interactions.FairyBellInteraction;
+import chjees.littlehelpers.npc.actions.builders.BuilderDumpInventory;
 import chjees.littlehelpers.npc.actions.builders.BuilderFairyHarvest;
 import chjees.littlehelpers.npc.actions.builders.BuilderFairySetHome;
 import chjees.littlehelpers.npc.actions.builders.BuilderRecruitFairyAction;
@@ -133,6 +134,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
             NPCCore.registerCoreComponentType("LHRecruitFairy", BuilderRecruitFairyAction::new);
             NPCCore.registerCoreComponentType("LHFairySetHome", BuilderFairySetHome::new);
             NPCCore.registerCoreComponentType("LHHarvest", BuilderFairyHarvest::new);
+            NPCCore.registerCoreComponentType("LHDumpInventory", BuilderDumpInventory::new);
 
             //Sensor components
             NPCCore.registerCoreComponentType("LHFairyNeedsSatiated", BuilderFairyNeedsSensor::new);

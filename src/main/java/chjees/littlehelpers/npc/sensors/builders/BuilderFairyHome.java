@@ -6,6 +6,7 @@ import com.hypixel.hytale.server.npc.asset.builder.Builder;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderDescriptorState;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.asset.builder.Feature;
+import com.hypixel.hytale.server.npc.asset.builder.holder.IntHolder;
 import com.hypixel.hytale.server.npc.asset.builder.validators.IntRangeValidator;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
@@ -17,7 +18,7 @@ import com.hypixel.hytale.server.npc.instructions.Sensor;
  * <p>If <b>UsePosition</b> is set to true then this {@link Sensor} can be used to provide the home center position.</p>
  */
 public class BuilderFairyHome extends BuilderSensorBase {
-    private int homeRadius;
+    private final IntHolder homeRadius = new IntHolder();
     private boolean usePosition;
     private boolean outside;
 
@@ -38,7 +39,7 @@ public class BuilderFairyHome extends BuilderSensorBase {
     public Builder<Sensor> readConfig(JsonElement data) {
         this.getInt(data,
                 "HomeRadius",
-                this::setHomeRadius,
+                this.homeRadius,
                 30,
                 IntRangeValidator.between(0, Integer.MAX_VALUE),
                 BuilderDescriptorState.Stable,
@@ -74,14 +75,6 @@ public class BuilderFairyHome extends BuilderSensorBase {
         return BuilderDescriptorState.Stable;
     }
 
-    public int getHomeRadius() {
-        return homeRadius;
-    }
-
-    public void setHomeRadius(int homeRadius) {
-        this.homeRadius = homeRadius;
-    }
-
     public boolean getUsePosition() {
         return usePosition;
     }
@@ -96,5 +89,9 @@ public class BuilderFairyHome extends BuilderSensorBase {
 
     private void setOutside(boolean outside) {
         this.outside = outside;
+    }
+
+    public IntHolder getHomeRadius() {
+        return homeRadius;
     }
 }
