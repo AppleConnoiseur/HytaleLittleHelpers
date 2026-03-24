@@ -14,6 +14,8 @@ import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Modifier;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -53,6 +55,9 @@ public class VariablesOperation extends ActionBase {
             HytaleLogger.getLogger().at(Level.WARNING).atMostEvery(1, TimeUnit.MINUTES).log("VariablesOperation is trying to do a operation with a `null` VariablesComponent: %s", getBreadCrumbs());
             return false;
         }
+
+        //Temp fix
+        //varComp.fix();
 
         switch (this.operation)
         {

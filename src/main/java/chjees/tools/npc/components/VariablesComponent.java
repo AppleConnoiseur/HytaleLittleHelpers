@@ -5,16 +5,19 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.Component;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * <p>Storage of variables for mathematical operations.</p>
  */
 public class VariablesComponent implements Component<EntityStore> {
-    public final static MapCodec<Double, Map<String,Double>> VARIABLES_CODEC = new MapCodec<>(Codec.DOUBLE, Object2ObjectOpenHashMap::new);
+    public final static MapCodec<Double, Map<String,Double>> VARIABLES_CODEC =
+            new MapCodec<>(Codec.DOUBLE, Object2ObjectOpenHashMap::new, false);
     private Map<String, Double> variables = new Object2ObjectOpenHashMap<>();
 
     public VariablesComponent() { }

@@ -8,7 +8,6 @@ import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
 import com.hypixel.hytale.server.npc.asset.builder.holder.DoubleHolder;
 import com.hypixel.hytale.server.npc.asset.builder.holder.EnumHolder;
 import com.hypixel.hytale.server.npc.asset.builder.holder.StringHolder;
-import com.hypixel.hytale.server.npc.asset.builder.validators.DoubleRangeValidator;
 import com.hypixel.hytale.server.npc.asset.builder.validators.StringNotEmptyValidator;
 import com.hypixel.hytale.server.npc.corecomponents.builders.BuilderSensorBase;
 import com.hypixel.hytale.server.npc.instructions.Sensor;
@@ -58,7 +57,7 @@ public class BuilderVariablesCompareSensor extends BuilderSensorBase {
                 data,
                 "Value",
                 this.getValue(),
-                DoubleRangeValidator.between(Double.MIN_VALUE,Double.MAX_VALUE),
+                null,
                 BuilderDescriptorState.Stable,
                 "Value to do the operation with.",
                 null

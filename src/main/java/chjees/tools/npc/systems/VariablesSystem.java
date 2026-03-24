@@ -25,11 +25,6 @@ public class VariablesSystem extends RefSystem<EntityStore> {
         return Query.any();
     }
 
-    @SuppressWarnings("unused")
-    public ComponentType<EntityStore, VariablesComponent> getVariablesComponentType() {
-        return this.variablesComponentType;
-    }
-
     @Override
     public void onEntityAdded(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl AddReason addReason, @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         @SuppressWarnings("DataFlowIssue") NPCEntity npcComp = store.getComponent(ref, NPCEntity.getComponentType());

@@ -51,6 +51,9 @@ public class VariablesCompareSensor extends SensorBase {
             return false;
         }
 
+        if(!varComp.getVariables().containsKey(this.variableName))
+            return false;
+
         switch (this.operation)
         {
             case Equals -> {
@@ -68,6 +71,9 @@ public class VariablesCompareSensor extends SensorBase {
             case LesserOrEquals -> {
                 return varComp.getVariables().get(this.variableName) <= this.variableValue;
             }
+            case IsSet -> {
+                return varComp.getVariables().containsKey(this.variableName);
+            }
             default -> throw new IllegalStateException("VariablesCompare: Unexpected operation: " + this.operation);
         }
     }
@@ -82,7 +88,8 @@ public class VariablesCompareSensor extends SensorBase {
         Greater("Checks whether the variable is greater than the value: x > y"),
         GreaterOrEquals("Checks whether the variable is greater than or equals the value: x >= y"),
         Lesser("Checks whether the variable is lesser than the value: x < y"),
-        LesserOrEquals("Checks whether the variable is lesser than or equals the value: x <= y");
+        LesserOrEquals("Checks whether the variable is lesser than or equals the value: x <= y"),
+        IsSet("Checks whether the variable is set at all: Matches if x exists.");
 
         private final String description;
 
