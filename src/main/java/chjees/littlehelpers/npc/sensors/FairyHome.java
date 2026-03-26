@@ -56,7 +56,7 @@ public class FairyHome extends SensorBase {
 
         //Check distance
         Vector3d position = transformComp.getPosition();
-        double distanceToHome = 0d;position.distanceSquared(fairyComp.getHomeCoordinatesAsPoint());
+        double distanceToHome = position.distanceSquared(fairyComp.getHomeCoordinatesAsPoint());
 
         if(checkOutside)
         {
