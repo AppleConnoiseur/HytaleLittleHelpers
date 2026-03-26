@@ -4,7 +4,7 @@ import chjees.littlehelpers.npc.sensors.builders.BuilderFairyCanFarm;
 import chjees.littlehelpers.utility.NPCUtility;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3i;
+import com.hypixel.hytale.math.vector.Vector3dUtil;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.npc.role.Role;
 import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.joml.Vector3i;
 
 /**
  * Checks in a wide area if there is a harvestable {@link BlockType}. Expensive check meant to not be called often.
@@ -40,7 +41,8 @@ public class FairyCanFarm extends SensorBase {
         //Relevant data to work with.
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
         assert transform != null;
-        Vector3i originPosition = transform.getPosition().toVector3i();
+
+        Vector3i originPosition = Vector3dUtil.toVector3i(transform.getPosition());
 
         //Get relevant chunks.
         //Modified from:

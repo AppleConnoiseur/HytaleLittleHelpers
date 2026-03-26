@@ -10,7 +10,6 @@ import chjees.littlehelpers.npc.actions.builders.BuilderFairySetHome;
 import chjees.littlehelpers.npc.actions.builders.BuilderRecruitFairyAction;
 import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.filters.builders.BuilderFairyRecruiter;
-import chjees.littlehelpers.npc.movement.builders.BuilderBodyFlyMotionMaintainDistance;
 import chjees.littlehelpers.npc.sensors.builders.*;
 import chjees.littlehelpers.utility.ItemUtility;
 import chjees.tools.npc.actions.builders.BuilderClearMessage;
@@ -38,7 +37,6 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.NPCPlugin;
 import com.hypixel.hytale.server.npc.instructions.Action;
-import com.hypixel.hytale.server.npc.instructions.BodyMotion;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import javax.annotation.Nonnull;

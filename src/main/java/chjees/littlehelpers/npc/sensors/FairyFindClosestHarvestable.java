@@ -4,8 +4,7 @@ import chjees.littlehelpers.npc.sensors.builders.BuilderFairyFindClosestHarvesta
 import chjees.littlehelpers.utility.NPCUtility;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3i;
+import com.hypixel.hytale.math.vector.Vector3dUtil;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
@@ -20,6 +19,8 @@ import javax.annotation.Nonnull;
 
 import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.joml.Vector3d;
+import org.joml.Vector3i;
 
 /**
  * <p>Similar to the {@link FairyCanFarm} Sensor but this is dedicated to finding nearby harvestable {@link BlockType}'s in a short radius while providing position data.</p>
@@ -72,7 +73,8 @@ public class FairyFindClosestHarvestable extends SensorBase {
         //Relevant data to work with.
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
         assert transform != null;
-        Vector3i originPosition = transform.getPosition().toVector3i();
+
+        Vector3i originPosition = Vector3dUtil.toVector3i(transform.getPosition());
 
         boolean foundValidBlock = false; //In case we find a valid block, break out of all loops.
 

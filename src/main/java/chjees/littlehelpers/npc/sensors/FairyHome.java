@@ -5,7 +5,7 @@ import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyHome;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.math.vector.Vector3dUtil;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
@@ -15,6 +15,7 @@ import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+import org.joml.Vector3d;
 
 /**
  * Checks if the fairy is inside the home area. Can be inverted and provide a position of the home area center.
@@ -55,7 +56,7 @@ public class FairyHome extends SensorBase {
 
         //Check distance
         Vector3d position = transformComp.getPosition();
-        double distanceToHome = position.distanceSquaredTo(fairyComp.getHomeCoordinatesAsPoint());
+        double distanceToHome = 0d;position.distanceSquared(fairyComp.getHomeCoordinatesAsPoint());
 
         if(checkOutside)
         {
