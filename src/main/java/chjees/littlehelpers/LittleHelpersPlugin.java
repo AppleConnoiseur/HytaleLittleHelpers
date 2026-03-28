@@ -135,7 +135,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
             NPCCore.registerCoreComponentType("LHDumpInventory", BuilderDumpInventory::new);
 
             //Sensor components
-            NPCCore.registerCoreComponentType("LHFairyNeedsSatiated", BuilderFairyNeedsSensor::new);
+            NPCCore.registerCoreComponentType("LHFairyNeeds", BuilderFairyNeedsSensor::new);
             NPCCore.registerCoreComponentType("LHFairyHome", BuilderFairyHome::new);
             NPCCore.registerCoreComponentType("LHFairyIsRecruited", BuilderFairyIsRecruited::new);
             NPCCore.registerCoreComponentType("LHIsFairyRecruiter", BuilderFairyRecruiterSensor::new);
@@ -246,15 +246,14 @@ public class LittleHelpersPlugin extends JavaPlugin {
                 {
                     String finalBlockId = finalStageBlockType.getId();
                     harvestableBlocks.add(finalBlockId);
-                    getHarvestableBlockIds().add(BlockType.getAssetMap().getIndex(finalBlockId));
+                    harvestableBlockIds.add(BlockType.getAssetMap().getIndex(finalBlockId));
                     farmableItemToBlockTypeIds.put(item.getId(), finalBlockId);
                 }
             }
 
-            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s", String.valueOf(getHarvestableBlocks().size()), FormatUtil.nanosToString(System.nanoTime() - start));
-            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Block IDs: %s", harvestableBlockIds);
-            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Blocks: %s", harvestableBlocks);
-            //HytaleLogger.forEnclosingClass().at(Level.INFO).log("Item to Blocks: %s", farmableItemToBlockTypeIds);
+            HytaleLogger.forEnclosingClass().at(Level.INFO).log("Scanning for farmable blocks! No. Blocks: [%s] Took: %s",
+                    String.valueOf(getHarvestableBlocks().size()),
+                    FormatUtil.nanosToString(System.nanoTime() - start));
         } catch (Exception e) {
             HytaleLogger.forEnclosingClass().at(Level.SEVERE).withCause(e).log("Failed to scan for farmable blocks!");
         }
