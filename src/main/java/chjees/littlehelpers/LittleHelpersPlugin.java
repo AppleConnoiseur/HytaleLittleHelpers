@@ -81,7 +81,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
         EventRegistry eventRegistry = this.getEventRegistry();
 
         //Commands
-        this.getCommandRegistry().registerCommand(new LittleHelpersDebug("lhfairy", "Little Helpers mod debug commands."));
+        this.getCommandRegistry().registerCommand(new LittleHelpersDebug("lhfairy", "commands.Little_Helpers.commands.debug.component.desc"));
         eventRegistry.registerGlobal(PlayerReadyEvent.class, LittleHelpersDebuggingEvent::onPlayerReady);
 
         //Entity interactions
