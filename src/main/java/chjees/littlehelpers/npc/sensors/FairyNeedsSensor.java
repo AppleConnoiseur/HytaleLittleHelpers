@@ -3,7 +3,6 @@ package chjees.littlehelpers.npc.sensors;
 import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.components.FairyComponent;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyNeedsSensor;
-import com.hypixel.hytale.builtin.hytalegenerator.delimiters.RangeDouble;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -25,22 +24,20 @@ import javax.annotation.Nonnull;
  */
 @SuppressWarnings("FieldMayBeFinal")
 public class FairyNeedsSensor extends SensorBase {
-    private RangeDouble foodNeedRange;
-    private RangeDouble essenceNeedRange;
-    private RangeDouble happinessNeedRange;
+    private final double[] foodArray;
+    private final double[] essenceArray;
+    private final double[] happinessArray;
+
 
     public  FairyNeedsSensor(@Nonnull BuilderFairyNeedsSensor builder, @Nonnull BuilderSupport builderSupport)
     {
         super(builder);
 
-        double[] foodArray = builder.getFoodNeedRange(builderSupport);
-        foodNeedRange = new RangeDouble(foodArray[0], foodArray[1]);
+        foodArray = builder.getFoodNeedRange(builderSupport);
 
-        double[] essenceArray = builder.getEssenceNeedRange(builderSupport);
-        essenceNeedRange = new RangeDouble(essenceArray[0], essenceArray[1]);
+        essenceArray = builder.getEssenceNeedRange(builderSupport);
 
-        double[] happinessArray = builder.getHappinessNeedRange(builderSupport);
-        happinessNeedRange = new RangeDouble(happinessArray[0], happinessArray[1]);
+        happinessArray = builder.getHappinessNeedRange(builderSupport);
     }
 
     @Override
@@ -54,9 +51,21 @@ public class FairyNeedsSensor extends SensorBase {
             return false;
 
         //Are any of our needs not satiated?
-        return foodNeedRange.contains(fairyComp.getFoodNeed()) &&
-                essenceNeedRange.contains(fairyComp.getEssenceNeed()) &&
-                happinessNeedRange.contains(fairyComp.getHappinessNeed());
+        return inRange(foodArray, fairyComp.getFoodNeed()) &&
+                inRange(essenceArray, fairyComp.getEssenceNeed()) &&
+                inRange(happinessArray, fairyComp.getHappinessNeed());
+    }
+
+    /**
+     * <p>Simple implementation that checks if the <b>test</b> value is within the <b>range</b>.</p>
+     * <p><b>range[0]</b> -&gt; <b>test</b> -&gt; <b>range[1]</b></p>
+     * @param range Two length double array. <b>double[2]</b>
+     * @param test Value to test with.
+     * @return True if <b>test</b> is between <b>range[0]</b> and <b>range[1]</b>.
+     */
+    private boolean inRange(double[] range, double test)
+    {
+        return  test >= range[0] && test <= range[1];
     }
 
     @Override

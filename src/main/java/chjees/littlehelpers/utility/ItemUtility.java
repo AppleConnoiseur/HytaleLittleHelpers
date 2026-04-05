@@ -58,8 +58,7 @@ public class ItemUtility {
                         return  stage2BlockType;
                     }
 
-                    //Not supposed to happen. Send out a warning.
-                    HytaleLogger.forEnclosingClass().at(Level.WARNING).log("Found harvestable Item in `%s` but the `StageFinal` or `Stage2` stages are missing.", item.getId());
+                    //Not harvestable as a `Crop` block. Return nothing.
                     return null;
                 }
 
