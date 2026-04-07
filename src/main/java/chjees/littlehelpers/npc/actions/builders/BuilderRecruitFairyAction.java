@@ -18,8 +18,7 @@ import java.util.EnumSet;
  * <p>Recruits the fairy and initializes the {@link chjees.littlehelpers.npc.components.FairyComponent} for it with preset data.</p>
  */
 public class BuilderRecruitFairyAction  extends BuilderActionBase {
-    @SuppressWarnings("FieldMayBeFinal")
-    private AssetHolder recruitedAppearance = new AssetHolder();
+    private final AssetHolder recruitedAppearance = new AssetHolder();
 
     @NullableDecl
     @Override

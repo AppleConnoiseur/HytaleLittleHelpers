@@ -1,5 +1,6 @@
 package chjees.littlehelpers.npc.sensors;
 
+import chjees.tools.algorithm.SpiralPattern;
 import chjees.littlehelpers.npc.sensors.builders.BuilderFairyFindClosestHarvestable;
 import chjees.littlehelpers.utility.NPCUtility;
 import com.hypixel.hytale.component.Ref;
@@ -34,7 +35,9 @@ import org.joml.Vector3i;
  */
 public class FairyFindClosestHarvestable extends SensorBase {
     //Builder variables
+    /// The maximum range radius in cells to find harvestable crops in.
     private final int scanRange;
+    /// Position provider for the sensor.
     private final PositionProvider positionProvider = new PositionProvider();
 
     public FairyFindClosestHarvestable(@Nonnull BuilderFairyFindClosestHarvestable builder, @Nonnull BuilderSupport builderSupport) {
@@ -46,8 +49,7 @@ public class FairyFindClosestHarvestable extends SensorBase {
     @Override
     public boolean matches(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Role role, double dt, @NonNullDecl Store<EntityStore> store) {
         //Ensure we will only try to match as long as our parent class matches.
-        if (!super.matches(ref, role, dt, store))
-        {
+        if (!super.matches(ref, role, dt, store)) {
             positionProvider.clear();
             return false;
         }
@@ -60,13 +62,31 @@ public class FairyFindClosestHarvestable extends SensorBase {
         Store<ChunkStore> chunkStore = world.getChunkStore().getStore();
 
         //Check if the current block we have set is a valid harvestable block.
-        if(positionProvider.hasPosition())
-        {
-            if(NPCUtility.checkHarvestableBlock(chunkStore, positionProvider))
-            {
+        Vector3i lastValidPosition = null;
+        if (positionProvider.hasPosition()) {
+            if (NPCUtility.checkHarvestableBlock(chunkStore, positionProvider)) {
                 return true;
-            } else{
+            } else {
+                //Get last position.
+                lastValidPosition = new Vector3i(
+                        (int) positionProvider.getX(),
+                        (int) positionProvider.getY(),
+                        (int) positionProvider.getZ());
                 positionProvider.clear();
+            }
+        }
+
+        //Shallow search
+        //Look at blocks closest to the last block on the same Y-level in a spiral pattern.
+        if(lastValidPosition != null)
+        {
+            //Do a spiral search in a 5 x 5 area.
+            var result = SpiralPattern.generate(24, lastValidPosition,
+                    cell -> NPCUtility.checkHarvestableBlock(chunkStore, cell.x, cell.y, cell.z));
+            if(result.matching())
+            {
+                positionProvider.setTarget(result.getCellDouble());
+                return true;
             }
         }
 
@@ -86,9 +106,11 @@ public class FairyFindClosestHarvestable extends SensorBase {
         int south = originPosition.z + halfRadius;
         int top = originPosition.y - halfRadius;
         int bottom = originPosition.y + halfRadius;
-        if(bottom < 0)
+        if (bottom < 0)
             bottom = 0;
 
+        //Deep search
+        //Scan around a large area.
         for (int loopX = west; loopX <= east && !foundValidBlock; loopX++)
         {
             for (int loopZ = north; loopZ <= south && !foundValidBlock; loopZ++)
@@ -104,6 +126,7 @@ public class FairyFindClosestHarvestable extends SensorBase {
                 }
             }
         }
+
 
         if(!foundValidBlock)
         {

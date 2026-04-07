@@ -24,8 +24,7 @@ import javax.annotation.Nonnull;
  * <p>Recruits the fairy and initializes the {@link FairyComponent} for it with preset data.</p>
  */
 public class RecruitFairyAction extends ActionBase {
-    @SuppressWarnings("FieldMayBeFinal")
-    private String recruitedAppearance;
+    private final String recruitedAppearance;
 
     public RecruitFairyAction(@NonNullDecl BuilderRecruitFairyAction builderActionBase, BuilderSupport builderSupport) {
         super(builderActionBase);
