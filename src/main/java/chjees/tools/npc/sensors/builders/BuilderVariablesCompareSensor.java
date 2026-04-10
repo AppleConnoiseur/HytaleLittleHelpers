@@ -39,7 +39,7 @@ public class BuilderVariablesCompareSensor extends BuilderSensorBase {
         this.requireEnum(
                 data,
                 "Operation",
-                this.getOperation(),
+                this.operation,
                 VariablesCompareSensor.Operation.class,
                 BuilderDescriptorState.Stable,
                 "Mathematical operation to perform.",
@@ -47,7 +47,7 @@ public class BuilderVariablesCompareSensor extends BuilderSensorBase {
         this.requireString(
                 data,
                 "Variable",
-                this.getVariableName(),
+                this.variableName,
                 StringNotEmptyValidator.get(),
                 BuilderDescriptorState.Stable,
                 "Variable name to perform the operation on.",
@@ -56,7 +56,7 @@ public class BuilderVariablesCompareSensor extends BuilderSensorBase {
         this.requireDouble(
                 data,
                 "Value",
-                this.getValue(),
+                this.value,
                 null,
                 BuilderDescriptorState.Stable,
                 "Value to do the operation with.",
