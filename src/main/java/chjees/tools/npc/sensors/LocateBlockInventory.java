@@ -93,7 +93,8 @@ public class LocateBlockInventory extends SensorBase {
                         blockInventories.add(new IntObjectImmutablePair<>(blockEntityIndex,component));
                 }
             });
-            return true; //ItemContainerBlock.getComponentType()
+            //We want to search all chunks, that is why we return false.
+            return false;
         });
 
         if(!blockInventories.isEmpty())
