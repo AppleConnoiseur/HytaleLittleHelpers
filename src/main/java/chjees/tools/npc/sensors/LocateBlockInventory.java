@@ -84,7 +84,13 @@ public class LocateBlockInventory extends SensorBase {
                 ItemContainerBlock component = blockComponentChunk.getComponent(blockEntityIndex, ItemContainerBlock.getComponentType());
                 if(component != null)
                 {
-                    blockInventories.add(new IntObjectImmutablePair<>(blockEntityIndex,component));
+                    //Add if its within distance.
+                    int x1 = ChunkUtil.xFromIndex(blockEntityIndex);
+                    int y1 = ChunkUtil.yFromIndex(blockEntityIndex);
+                    int z1 = ChunkUtil.zFromIndex(blockEntityIndex);
+
+                    if(Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) <= scanRange)
+                        blockInventories.add(new IntObjectImmutablePair<>(blockEntityIndex,component));
                 }
             });
             return true; //ItemContainerBlock.getComponentType()
