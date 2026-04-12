@@ -11,7 +11,6 @@ import com.hypixel.hytale.server.core.modules.block.components.ItemContainerBloc
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.chunk.BlockComponentChunk;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.asset.builder.BuilderSupport;
@@ -22,7 +21,7 @@ import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import javax.annotation.Nonnull;
 
 import com.hypixel.hytale.server.npc.sensorinfo.PositionProvider;
-import it.unimi.dsi.fastutil.ints.IntObjectImmutablePair;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
@@ -65,7 +64,7 @@ public class LocateBlockInventory extends SensorBase {
         Store<ChunkStore> chunkStore = world.getChunkStore().getStore();
 
         //Block index + ItemContainerBlock
-        ArrayList<IntObjectImmutablePair<ItemContainerBlock>> blockInventories = new ArrayList<>();
+        ArrayList<ObjectObjectImmutablePair<Vector3i,ItemContainerBlock>> blockInventories = new ArrayList<>();
 
         //Check chunks for inventories.
         ChunkTraverser.generate(scanRange, originPosition, chunk -> {
@@ -73,10 +72,7 @@ public class LocateBlockInventory extends SensorBase {
             Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
             assert chunkReference != null;
 
-            WorldChunk worldChunk = chunkStore.getComponent(chunkReference, WorldChunk.getComponentType());
-            assert worldChunk != null;
-
-            BlockComponentChunk blockComponentChunk = worldChunk.getBlockComponentChunk();
+            BlockComponentChunk blockComponentChunk = chunkStore.getComponent(chunkReference, BlockComponentChunk.getComponentType());
             assert blockComponentChunk != null;
 
             var entityRefs = blockComponentChunk.getEntityReferences();
@@ -85,12 +81,12 @@ public class LocateBlockInventory extends SensorBase {
                 if(component != null)
                 {
                     //Add if its within distance.
-                    int x1 = ChunkUtil.xFromIndex(blockEntityIndex);
+                    int x1 = ChunkUtil.xFromIndex(blockEntityIndex) + (chunk.x * ChunkUtil.SIZE);
                     int y1 = ChunkUtil.yFromIndex(blockEntityIndex);
-                    int z1 = ChunkUtil.zFromIndex(blockEntityIndex);
+                    int z1 = ChunkUtil.zFromIndex(blockEntityIndex) + (chunk.y * ChunkUtil.SIZE);
 
                     if(Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) <= scanRange)
-                        blockInventories.add(new IntObjectImmutablePair<>(blockEntityIndex,component));
+                        blockInventories.add(new ObjectObjectImmutablePair<>(new Vector3i(x1, y1, z1), component));
                 }
             });
             //We want to search all chunks, that is why we return false.
@@ -101,18 +97,19 @@ public class LocateBlockInventory extends SensorBase {
         {
             //Sort inventories by distance.
             blockInventories.sort((first, second) -> {
-                int x1 = ChunkUtil.xFromIndex(first.leftInt());
-                int y1 = ChunkUtil.yFromIndex(first.leftInt());
-                int z1 = ChunkUtil.zFromIndex(first.leftInt());
+                int x1 = first.left().x;
+                int y1 = first.left().y;
+                int z1 = first.left().z;
 
-                int x2 = ChunkUtil.xFromIndex(second.leftInt());
-                int y2 = ChunkUtil.yFromIndex(second.leftInt());
-                int z2 = ChunkUtil.zFromIndex(second.leftInt());
+                int x2 = second.left().x;
+                int y2 = second.left().y;
+                int z2 = second.left().z;
 
                 return (int)Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) -
                         (int)Vector3d.distanceSquared(x2, y2, z2, originPosition.x, originPosition.y, originPosition.z);
             });
 
+            //Perform match.
             switch (inventoryFilter)
             {
                 case Any ->
@@ -120,10 +117,9 @@ public class LocateBlockInventory extends SensorBase {
                     //Take the first closest matching inventory.
                     var matchingInventory = blockInventories.getFirst();
 
-                    //Extract co-ordinates from index.
-                    int x = ChunkUtil.xFromIndex(matchingInventory.leftInt());
-                    int y = ChunkUtil.yFromIndex(matchingInventory.leftInt());
-                    int z = ChunkUtil.zFromIndex(matchingInventory.leftInt());
+                    int x = matchingInventory.left().z;
+                    int y = matchingInventory.left().y;
+                    int z = matchingInventory.left().z;
 
                     //Provide target and return match.
                     positionProvider.setTarget(x, y, z);
@@ -132,12 +128,11 @@ public class LocateBlockInventory extends SensorBase {
                 case SpaceLeft ->
                 {
                     //Iterate through matching inventories.
-                    for (IntObjectImmutablePair<ItemContainerBlock> blockInventory : blockInventories) {
+                    for (ObjectObjectImmutablePair<Vector3i,ItemContainerBlock> blockInventory : blockInventories) {
 
-                        //Extract co-ordinates from index.
-                        int x = ChunkUtil.xFromIndex(blockInventory.leftInt());
-                        int y = ChunkUtil.yFromIndex(blockInventory.leftInt());
-                        int z = ChunkUtil.zFromIndex(blockInventory.leftInt());
+                        int x = blockInventory.left().z;
+                        int y = blockInventory.left().y;
+                        int z = blockInventory.left().z;
 
                         if(blockInventory.right().getItemContainer().canAddItemStack(TEST_ITEMSTACK))
                         {
@@ -152,12 +147,11 @@ public class LocateBlockInventory extends SensorBase {
                 case Empty ->
                 {
                     //Iterate through matching inventories.
-                    for (IntObjectImmutablePair<ItemContainerBlock> blockInventory : blockInventories) {
+                    for (ObjectObjectImmutablePair<Vector3i,ItemContainerBlock> blockInventory : blockInventories) {
 
-                        //Extract co-ordinates from index.
-                        int x = ChunkUtil.xFromIndex(blockInventory.leftInt());
-                        int y = ChunkUtil.yFromIndex(blockInventory.leftInt());
-                        int z = ChunkUtil.zFromIndex(blockInventory.leftInt());
+                        int x = blockInventory.left().x;
+                        int y = blockInventory.left().y;
+                        int z = blockInventory.left().z;
 
                         if(blockInventory.right().getItemContainer().isEmpty())
                         {

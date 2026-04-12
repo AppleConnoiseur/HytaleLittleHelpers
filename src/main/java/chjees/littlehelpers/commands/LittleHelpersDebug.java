@@ -2,26 +2,38 @@ package chjees.littlehelpers.commands;
 
 import chjees.littlehelpers.LittleHelpersPlugin;
 import chjees.littlehelpers.npc.components.FairyComponent;
+import chjees.tools.algorithm.ChunkTraverser;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.math.util.ChunkUtil;
+import com.hypixel.hytale.math.vector.Vector3dUtil;
 import com.hypixel.hytale.protocol.DebugShape;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
-import com.hypixel.hytale.server.core.command.system.basecommands.AbstractCommandCollection;
-import com.hypixel.hytale.server.core.command.system.basecommands.AbstractTargetEntityCommand;
+import com.hypixel.hytale.server.core.command.system.basecommands.*;
+import com.hypixel.hytale.server.core.modules.block.components.ItemContainerBlock;
 import com.hypixel.hytale.server.core.modules.debug.DebugUtils;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
+import com.hypixel.hytale.server.core.universe.world.chunk.BlockComponentChunk;
+import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
+import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import it.unimi.dsi.fastutil.ints.IntObjectImmutablePair;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-
+import org.joml.Vector3i;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Debugging commands for developing this mod.
@@ -32,6 +44,7 @@ public class LittleHelpersDebug extends AbstractCommandCollection {
         this.addSubCommand(new Inspect("inspect", "commands.Little_Helpers.commands.debug.component.inspect.desc"));
         this.addSubCommand(new Home("home", "commands.Little_Helpers.commands.debug.component.home.desc"));
         this.addSubCommand(new Needs("needs", "commands.Little_Helpers.commands.debug.component.needs.desc"));
+        this.addSubCommand(new TestInventory("test", "commands.Little_Helpers.commands.debug.component.test.desc"));
     }
 
 
@@ -42,6 +55,66 @@ public class LittleHelpersDebug extends AbstractCommandCollection {
         matrix.translate(pos);
         matrix.scale(scale, scale, scale);
         return matrix;
+    }
+
+    private static class TestInventory extends AbstractPlayerCommand {
+
+        public TestInventory(@NonNullDecl String name, @NonNullDecl String description) {
+            super(name, description);
+        }
+
+        @Override
+        protected void execute(
+                @NonNullDecl CommandContext commandContext,
+                @NonNullDecl Store<EntityStore> store,
+                @NonNullDecl Ref<EntityStore> ref,
+                @NonNullDecl PlayerRef playerRef,
+                @NonNullDecl World world) {
+            if(commandContext.isPlayer())
+            {
+                TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
+                assert transform != null;
+                Vector3i originPosition = Vector3dUtil.toVector3i(transform.getPosition());
+
+                Store<ChunkStore> chunkStore = world.getChunkStore().getStore();
+
+                //Block index + ItemContainerBlock
+                ArrayList<ObjectObjectImmutablePair<Vector3i,ItemContainerBlock>> blockInventories = new ArrayList<>();
+
+                //Check chunks for inventories.
+                ChunkTraverser.generate(30, originPosition, chunk -> {
+                    long chunkIndex = ChunkUtil.indexChunk(chunk.x, chunk.y);
+                    HytaleLogger.getLogger().at(Level.INFO).log("Chunk: %d :: %d, %d", chunkIndex, chunk.x, chunk.y);
+                    Ref<ChunkStore> chunkReference = chunkStore.getExternalData().getChunkReference(chunkIndex);
+                    assert chunkReference != null;
+
+                    BlockComponentChunk blockComponentChunk = chunkStore.getComponent(chunkReference, BlockComponentChunk.getComponentType());
+                    assert blockComponentChunk != null;
+
+                    var entityRefs = blockComponentChunk.getEntityReferences();
+
+                    entityRefs.forEach((blockEntityIndex, _) -> {
+                        ItemContainerBlock component = blockComponentChunk.getComponent(blockEntityIndex, ItemContainerBlock.getComponentType());
+                        if(component != null)
+                        {
+                            //Add if its within distance.
+                            int x1 = ChunkUtil.xFromIndex(blockEntityIndex) + (chunk.x * ChunkUtil.SIZE);
+                            int y1 = ChunkUtil.yFromIndex(blockEntityIndex);
+                            int z1 = ChunkUtil.zFromIndex(blockEntityIndex) + (chunk.y * ChunkUtil.SIZE);
+
+                            HytaleLogger.getLogger().at(Level.INFO).log("ItemContainerBlock at: %d, %d, %d :: distance: %d", x1, y1, z1, Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z));
+
+                            if(Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) <= 30)
+                                blockInventories.add(new ObjectObjectImmutablePair<>(new Vector3i(x1, y1, z1), component));
+                        }
+                    });
+                    //We want to search all chunks, that is why we return false.
+                    return false;
+                });
+
+                commandContext.sendMessage(Message.raw(String.format("Inventories: %s", blockInventories)));
+            }
+        }
     }
 
     /**
