@@ -9,6 +9,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3dUtil;
 import com.hypixel.hytale.protocol.DebugShape;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
@@ -17,13 +18,12 @@ import com.hypixel.hytale.server.core.command.system.basecommands.*;
 import com.hypixel.hytale.server.core.modules.block.components.ItemContainerBlock;
 import com.hypixel.hytale.server.core.modules.debug.DebugUtils;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
+import com.hypixel.hytale.server.core.permissions.HytalePermissions;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.chunk.BlockComponentChunk;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import it.unimi.dsi.fastutil.ints.IntObjectImmutablePair;
 import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.joml.Matrix4d;
@@ -41,10 +41,10 @@ import java.util.logging.Level;
 public class LittleHelpersDebug extends AbstractCommandCollection {
     public LittleHelpersDebug(String name, String description) {
         super(name, description);
-        this.addSubCommand(new Inspect("inspect", "commands.Little_Helpers.commands.debug.component.inspect.desc"));
-        this.addSubCommand(new Home("home", "commands.Little_Helpers.commands.debug.component.home.desc"));
-        this.addSubCommand(new Needs("needs", "commands.Little_Helpers.commands.debug.component.needs.desc"));
-        this.addSubCommand(new TestInventory("test", "commands.Little_Helpers.commands.debug.component.test.desc"));
+        this.addSubCommand(new Inspect("inspect", "commands.littlehelpers.commands.debug.component.inspect.desc"));
+        this.addSubCommand(new Home("home", "commands.littlehelpers.commands.debug.component.home.desc"));
+        this.addSubCommand(new Needs("needs", "commands.littlehelpers.commands.debug.component.needs.desc"));
+        this.addSubCommand(new TestInventory("test", "commands.littlehelpers.commands.debug.component.test.desc"));
     }
 
 

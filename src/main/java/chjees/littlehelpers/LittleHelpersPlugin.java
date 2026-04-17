@@ -78,7 +78,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
         EventRegistry eventRegistry = this.getEventRegistry();
 
         //Commands
-        this.getCommandRegistry().registerCommand(new LittleHelpersDebug("lhfairy", "commands.Little_Helpers.commands.debug.component.desc"));
+        this.getCommandRegistry().registerCommand(new LittleHelpersDebug("lhfairy", "commands.littlehelpers.commands.debug.component.desc"));
         eventRegistry.registerGlobal(PlayerReadyEvent.class, LittleHelpersDebuggingEvent::onPlayerReady);
 
         //Entity interactions
@@ -97,7 +97,7 @@ public class LittleHelpersPlugin extends JavaPlugin {
 
         //Only inject if the builder for MaintainDistanceFly does not exist.
         //Ensure injections are only done once.
-        if(!builderNames.contains("BuilderFairySetHome"))
+        //if(!builderNames.contains("BuilderFairySetHome"))
         {
             //Sub-mod: NPC tools
             //Components

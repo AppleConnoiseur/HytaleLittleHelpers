@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 /**
  * <p>Locates a nearby inventory.</p>
  */
-public class LocateBlockInventory extends SensorBase {
+public class LocateBlockInventory extends SensorBase implements MatchableBlockInventory {
     /// The maximum range radius in cells to find block inventories in.
     private final int scanRange;
     private final InventoryStatus inventoryFilter;
@@ -46,6 +46,13 @@ public class LocateBlockInventory extends SensorBase {
 
         scanRange = builder.getScanRange().get(builderSupport.getExecutionContext());
         inventoryFilter = builder.getFilter().get(builderSupport.getExecutionContext());
+    }
+
+    @SuppressWarnings("unused")
+    public boolean matchInventory(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Role role, @NonNullDecl Store<EntityStore> store,
+                                     Vector3i blockPosition, ItemContainerBlock blockContainer, Ref<ChunkStore> chunkReference)
+    {
+        return  true;
     }
 
     @Override
@@ -84,9 +91,10 @@ public class LocateBlockInventory extends SensorBase {
                     int x1 = ChunkUtil.xFromIndex(blockEntityIndex) + (chunk.x * ChunkUtil.SIZE);
                     int y1 = ChunkUtil.yFromIndex(blockEntityIndex);
                     int z1 = ChunkUtil.zFromIndex(blockEntityIndex) + (chunk.y * ChunkUtil.SIZE);
-
-                    if(Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) <= scanRange)
-                        blockInventories.add(new ObjectObjectImmutablePair<>(new Vector3i(x1, y1, z1), component));
+                    Vector3i blockPosition = new Vector3i(x1, y1, z1);
+                    if(matchInventory(ref, role, store, blockPosition, component, chunkReference) &&
+                            Vector3d.distanceSquared(x1, y1, z1, originPosition.x, originPosition.y, originPosition.z) <= scanRange)
+                        blockInventories.add(new ObjectObjectImmutablePair<>(blockPosition, component));
                 }
             });
             //We want to search all chunks, that is why we return false.

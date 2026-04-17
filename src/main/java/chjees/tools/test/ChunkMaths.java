@@ -1,4 +1,4 @@
-package chjees.littlehelpers.tools;
+package chjees.tools.test;
 
 import com.hypixel.hytale.math.util.ChunkUtil;
 import org.joml.Vector2i;

@@ -1,4 +1,4 @@
-package chjees.littlehelpers.tools;
+package chjees.tools.test;
 
 /**
  * <p>Spiral pattern testing class.</p>
