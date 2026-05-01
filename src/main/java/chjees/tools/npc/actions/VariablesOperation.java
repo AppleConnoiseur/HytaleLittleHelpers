@@ -14,8 +14,6 @@ import com.hypixel.hytale.server.npc.sensorinfo.InfoProvider;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Modifier;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
